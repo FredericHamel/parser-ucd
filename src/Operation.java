@@ -2,14 +2,18 @@ import java.util.*;
 
 public class Operation {
 	private String methodeName, typeReturn;
-	private ArrayList<Parameter> p = new ArrayList<Parameter>();
+	private Set<Parametre> params;
 	
-	public Operation(String methode, String typeReturn, ArrayList<Parameter> p){
+	public Operation(String methode, String typeReturn){
 		this.methodeName = methode;
 		this.typeReturn = typeReturn;
-		this.p = p;
+		this.p = new TreeSet<Parametre>();
 	}
 	
+    public void addParam(Parametre p) {
+        this.params.add(p);
+    }
+
 	public String getMethode(){
 		return this.methodeName;
 	}
@@ -18,7 +22,11 @@ public class Operation {
 		return this.typeReturn;
 	}
 	
-	public ArrayList<Parameter> getParam(){
+    public Iterator<Parametre> getParamIterator() {
+        return this.params.iterator();
+    }
+
+	public ArrayList<Parametre> getParam(){
 		return this.p;
 	}
 }

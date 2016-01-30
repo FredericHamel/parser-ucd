@@ -1,9 +1,9 @@
 import java.util.*;
 
-public class Class {
+public class Classe {
 	
 	private String name;
-	private Set<Attribute> attributes;
+	private Set<Attribut> attributes;
 	private Set<Operation> operations;
 	
 	/**
@@ -12,7 +12,7 @@ public class Class {
 	 * @param a
 	 * @param o
 	 */
-	public Class(String name){
+	public Classe(String name){
 		this.name = name;
 		this.attributes = new TreeSet<>();
 		this.operations = new TreeSet<>();
@@ -26,7 +26,7 @@ public class Class {
 		return this.name;
 	}
 	
-    public void addAttribute(Attribute a) {
+    public void addAttribut(Attribut a) {
         attributes.add(a);
     }
 
@@ -38,7 +38,7 @@ public class Class {
 	 * Getter arraylist of attributes
 	 * @return attributes
 	 */
-	public Iterator<Attribute> getAttributeIterator(){
+	public Iterator<Attribut> getAttributIterator(){
 		return this.attributes.iterator();
 	}
 	

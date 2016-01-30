@@ -1,8 +1,8 @@
 
-public final class Attribute {
+public final class Attribut {
 	private final String name, type;
 	
-	public Attribute(String name, String type){
+	public Attribut(String name, String type){
 		this.name = name;
 		this.type = type;
 	}

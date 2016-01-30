@@ -1,8 +1,8 @@
 
-public class Parameter {
+public class Parametre {
 	private String name, type;
 	
-	public Parameter(String name, String type){
+	public Parametre(String name, String type){
 		this.name=name;
 		this.type=type;
 	}

@@ -1,5 +1,5 @@
 
-public final class Attribut {
+public final class Attribut implements Comparable<Attribut> {
 	private final String name, type;
 	
 	public Attribut(String name, String type){
@@ -13,5 +13,10 @@ public final class Attribut {
 	
 	public String getType(){
 		return this.type;
+	}
+	
+	@Override
+	public int compareTo(Attribut o) {
+		return this.name.compareTo(o.getName());
 	}
 }

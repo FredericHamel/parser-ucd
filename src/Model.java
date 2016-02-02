@@ -3,15 +3,17 @@ import java.util.*;
 public class Model {
 	
 	private String name;
-	private ArrayList<Class> classes = new ArrayList<Class>();
+	private Set<Classe> classes;
+	
 	
 	public Model(){
-		
+		this.name="";
+		this.classes = new TreeSet<>();
 	}
 	
-	public Model(String name, ArrayList<Class> c){
+	public Model(String name){
 		this.name = name;
-		this.classes = c;
+		this.classes = new TreeSet<>();
 	}
 	
 	public String getName(){
@@ -22,8 +24,23 @@ public class Model {
 		this.name = newName;
 	}
 	
-	public ArrayList<Class> getClasses(){
-		return this.classes;
+	public void addClasse(Classe c) {
+		classes.add(c);
+	}
+	
+	public Classe findClasse(String name, boolean create) {
+		Classe c = null;
+		Iterator<Classe> it = this.getClasseIterator();
+		while(it.hasNext()) {
+			c = it.next();
+			if(c.getName().equals(name))
+				return c;
+		}
+		return create ? new Classe(name) : null;
+	}
+	
+	public Iterator<Classe> getClasseIterator() {
+		return this.classes.iterator();
 	}
 
 }

@@ -7,7 +7,7 @@ public class Operation {
 	public Operation(String methode, String typeReturn){
 		this.methodeName = methode;
 		this.typeReturn = typeReturn;
-		this.p = new TreeSet<Parametre>();
+		this.params = new TreeSet<Parametre>(); // chaque param unique
 	}
 	
     public void addParam(Parametre p) {
@@ -25,8 +25,5 @@ public class Operation {
     public Iterator<Parametre> getParamIterator() {
         return this.params.iterator();
     }
-
-	public ArrayList<Parametre> getParam(){
-		return this.p;
-	}
 }
+

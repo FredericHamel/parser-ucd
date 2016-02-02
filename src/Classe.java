@@ -1,6 +1,6 @@
 import java.util.*;
 
-public class Classe {
+public class Classe implements Comparable<Classe> {
 	
 	private String name;
 	private Set<Attribut> attributes;
@@ -48,5 +48,10 @@ public class Classe {
 	 */
 	public Iterator<Operation> getOperationsIterator(){
 		return this.operations.iterator();
+	}
+
+	@Override
+	public int compareTo(Classe o) {
+		return name.compareTo(o.getName());
 	}
 }

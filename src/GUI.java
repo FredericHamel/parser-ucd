@@ -28,7 +28,7 @@ public class GUI extends JFrame{
 	private JPanel topPanel,bottomPanel, centeredPanel,leftPanel;
 	private JButton chargerButton;
 	private JTextField fieldFile; 
-	private JList listClasses, listAttributes, listMethodes, listSubclasses, listRelations, listDetails;
+	private JList<String> listClasses, listAttributes, listMethodes, listSubclasses, listRelations, listDetails;
 	private int returnValue;
 	
 	private File file;
@@ -141,7 +141,7 @@ public class GUI extends JFrame{
 		leftPanel = new JPanel();//this.getContentPane();
 		SpringLayout layoutLeft= new SpringLayout();		
 		leftPanel.setLayout(layoutLeft);
-		listClasses = new JList(data);
+		listClasses = new JList<>(data);
 		
 		listClasses.setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
 		listClasses.setLayoutOrientation(JList.VERTICAL);
@@ -166,10 +166,10 @@ public class GUI extends JFrame{
 		String[] sub = {"sub", "sub2"};
 		String[] rel = {"rel", "rel2"};
 		
-		listAttributes = new JList(attr);
-		listMethodes = new JList(meth);
-		listSubclasses = new JList(sub);
-		listRelations = new JList(rel);
+		listAttributes = new JList<>(attr);
+		listMethodes = new JList<>(meth);
+		listSubclasses = new JList<>(sub);
+		listRelations = new JList<>(rel);
 		
 		JScrollPane listScroller1 = new JScrollPane(listAttributes);
 		//listScroller1.setPreferredSize(new Dimension(80, 80));
@@ -199,7 +199,7 @@ public class GUI extends JFrame{
 		
 		String[] data = {"details", "details1"};
 		
-		listDetails = new JList(data);
+		listDetails = new JList<>(data);
 		JScrollPane listScroller = new JScrollPane(listDetails);
 
 		bottomPanel.add(listScroller);

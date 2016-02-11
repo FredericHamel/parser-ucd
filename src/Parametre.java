@@ -7,11 +7,11 @@ public class Parametre {
 		this.type=type;
 	}
 	
-	public String getNameParam(){
+	public String getName(){
 		return this.name;
 	}
 	
-	public String getTypeParam(){
+	public String getType(){
 		return this.type;
 	}
 }

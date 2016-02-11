@@ -42,7 +42,6 @@ public class ParserUCD {
 	
 	private Scanner sc;
 	
-	private char caractere;
 	private String token;
 	private int state;
 	
@@ -56,7 +55,7 @@ public class ParserUCD {
 		this.state = ParserUCD.STATE_READ;
 	}
 	
-	public String nextToken() {
+    public String nextToken() {
 		String tmp;
 		if(pool == null || !pool.find()) {
 			tmp = sc.hasNext() ? sc.next(): null;
@@ -119,15 +118,18 @@ public class ParserUCD {
 		int state = ParserUCD.STATE_TYPE_SEPARATOR;
 		Classe classe = null;
 		boolean needNext = false;
-		String token = nextToken();
-		if(token == null || !token.matches(ParserUCD.IDENTIFIER_FORMAT))
+		nextToken();
+		
+        if(token == null || !token.matches(ParserUCD.IDENTIFIER_FORMAT))
 			throw new SyntaxException(String.format("Invalid classe name %s", token == null ? "null": token));
 		classe = m.findClasse(token, true);
-		token = nextToken();
-		if(token == null || !token.equals(ParserUCD.KEYWORD_ATTRIBUTES))
+		nextToken();
+		
+        if(token == null || !token.equals(ParserUCD.KEYWORD_ATTRIBUTES))
 			throw new SyntaxException(String.format("Expected ATTRIBUTES in classe %s", classe.getName()));
-		token = nextToken();
-		if(token == null)
+		nextToken();
+		
+        if(token == null)
 			throw new SyntaxException(String.format("Invalid class definition %s", classe.getName()));
 		
 		
@@ -136,11 +138,16 @@ public class ParserUCD {
 			parseAttributes(classe, token);
 		}
 		
-		token = nextToken();
+        // OPERATIONS
+		nextToken();
 		if(token == null)
 			throw new SyntaxException(String.format("Invalid class definition %s", classe.getName()));
-		if(!token.equals(";")) {
-			this.state = ParserUCD.STATE_PARAMETER;
+		
+        // soit ';' ou identifiant operation attendu.
+        if(!token.equals(";")) {
+            this.state = ParserUCD.STATE_PARAMETER;
+            if(!token.matches(IDENTIFIER_FORMAT))
+                throw new SyntaxException(String.format("Invalid operation identifier %s in class %s", token, classe.getName()));
 			parseOperations(classe, token);
 		}
 	}
@@ -148,10 +155,10 @@ public class ParserUCD {
 	// nom:type
 	// 
 	private void parseAttributes(Classe c, String name) {
-		String type = "";
+        String type = "";
 		System.out.println("CLASS " + c.getName());
 		do {
-			this.token = nextToken();
+			nextToken();
 			if(token == null)
 				throw new SyntaxException(String.format("Invalid attribute declaration %s", token));
 			switch(this.state) {
@@ -190,9 +197,9 @@ public class ParserUCD {
 	public void parseOperations(Classe c, String name) {
 		String type = "";
 		do {
-			this.token = nextToken();
+            nextToken();
 			if(token == null)
-				throw new SyntaxException(String.format("Invalid operation declaration %s", token));
+				throw new SyntaxException(String.format("Invalid operation declaration in class %s", c.getName()));
 			switch(this.state) {
 				case ParserUCD.STATE_IDENTIFIER:
 					if(!token.matches(ParserUCD.IDENTIFIER_FORMAT))
@@ -201,7 +208,10 @@ public class ParserUCD {
 					this.state = ParserUCD.STATE_PARAMETER;
 					break;
 				case ParserUCD.STATE_PARAMETER:
-					
+                    Operation op = c.findOperation(name, true);
+
+					if(!token.equals("("))
+                        throw new SyntaxException(String.format("Expected '(' after %s in class %s", token, c.getName()));
 					while(!nextToken().equals(")")); // TODO parseParameters();
 					this.state = ParserUCD.STATE_TYPE_SEPARATOR;
 					break;

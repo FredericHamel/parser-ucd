@@ -1,8 +1,8 @@
 // a R b 
-public abstract class Relation {
+public abstract class Relation implements Comparable<Relation> {
     private final char type;
-    private Role a;
-    private Role b;
+    private final Role a;
+    private final Role b;
 
     protected Relation(char t, Role a, Role b) {
         this.type = t;
@@ -18,4 +18,9 @@ public abstract class Relation {
     public Role getLeft() { return a; }
     // class b
     public Role getRight() { return b; }
+    
+    @Override
+    public int compareTo(Relation o) {
+        return o.a.compareTo(a) + o.b.compareTo(b) + o.type - type;
+    } 
 }

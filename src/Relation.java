@@ -1,6 +1,8 @@
+
 // a R b 
 public abstract class Relation implements Comparable<Relation> {
     private final char type;
+    
     private final Role a;
     private final Role b;
 

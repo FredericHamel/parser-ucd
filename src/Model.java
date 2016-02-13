@@ -4,7 +4,7 @@ public class Model {
 	
 	private String name;
 	private Set<Classe> classes;
-	
+	private Set<Relation> relation;
 	
 	public Model(){
 		this.name="";
@@ -24,8 +24,8 @@ public class Model {
 		this.name = newName;
 	}
 	
-	public void addClasse(Classe c) {
-		classes.add(c);
+	public boolean addClasse(Classe c) {
+		return classes.add(c);
 	}
 	
 	public Classe findClasse(String name, boolean create) {
@@ -36,7 +36,14 @@ public class Model {
 			if(c.getName().equals(name))
 				return c;
 		}
-		return create ? new Classe(name) : null;
+                if(create) {
+                    c = new Classe(name);
+                    this.addClasse(c);
+                }
+                else
+                    c = null;
+                    
+		return c;
 	}
 	
 	public Iterator<Classe> getClasseIterator() {

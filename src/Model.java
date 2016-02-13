@@ -65,7 +65,12 @@ public class Model {
 			if(g.getName().equals(name))
 				return g;
 		}
-		return create ? new Generalization(name) : null;
+                if(create) {
+                    g = new Generalization(name);
+                    this.addGeneralization(g);
+                }else
+                    g = null;
+		return g;
 	}
 	
 	public Iterator<Generalization> getGeneralizationIterator() {

@@ -5,15 +5,18 @@ public class Model {
 	private String name;
 	private Set<Classe> classes;
 	private Set<Relation> relation;
+	private Set<Generalization> generalizations;
 	
 	public Model(){
 		this.name="";
 		this.classes = new TreeSet<>();
+		this.generalizations = new TreeSet<>();
 	}
 	
 	public Model(String name){
 		this.name = name;
 		this.classes = new TreeSet<>();
+		this.generalizations = new TreeSet<>();
 	}
 	
 	public String getName(){
@@ -26,6 +29,10 @@ public class Model {
 	
 	public boolean addClasse(Classe c) {
 		return classes.add(c);
+	}
+	
+	public void addGeneralization(Generalization g) {
+		generalizations.add(g);
 	}
 	
 	public Classe findClasse(String name, boolean create) {
@@ -48,6 +55,21 @@ public class Model {
 	
 	public Iterator<Classe> getClasseIterator() {
 		return this.classes.iterator();
+	}
+	
+	public Generalization findGeneralization(String name, boolean create) {
+		Generalization g = null;
+		Iterator<Generalization> it = this.getGeneralizationIterator();
+		while(it.hasNext()) {
+			g = it.next();
+			if(g.getName().equals(name))
+				return g;
+		}
+		return create ? new Generalization(name) : null;
+	}
+	
+	public Iterator<Generalization> getGeneralizationIterator() {
+		return this.generalizations.iterator();
 	}
 
 }

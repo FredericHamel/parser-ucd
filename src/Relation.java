@@ -24,5 +24,5 @@ public abstract class Relation implements Comparable<Relation> {
     @Override
     public int compareTo(Relation o) {
         return o.a.compareTo(a) + o.b.compareTo(b) + o.type - type;
-    } 
+    }
 }

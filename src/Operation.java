@@ -46,5 +46,10 @@ public class Operation implements Comparable<Operation> {
         return o.methodeName.compareTo(this.methodeName)
                 + o.typeReturn.compareTo(this.typeReturn);
     }
+    
+    @Override
+    public String toString() {
+        return String.format("%s() : %s", methodeName, typeReturn);
+    }
 }
 

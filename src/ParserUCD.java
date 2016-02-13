@@ -154,7 +154,6 @@ public class ParserUCD {
     }
     
     private void parseSubClasses(Generalization g, String name, Model m){
-        System.out.printf("GENERALIZATION " + g.getName() + "\n\t SUBCLASSES");
         do {
             nextToken();
             if(token == null)
@@ -169,12 +168,9 @@ public class ParserUCD {
                 case ParserUCD.STATE_TYPE_NEXT:
                     Classe c = m.findClasse(name, true);
                     g.addSubClasses(c);
-                    System.out.printf(" " + name);
                     if(token.equals(",")){
-                    	System.out.printf(",");
                         this.state = ParserUCD.STATE_TYPE_IDENTIFIER;
                     }else if(token.equals(";")){
-                    	System.out.println("\n;");
                         this.state = ParserUCD.STATE_READ;
                     }else
                         throw new SyntaxException(String.format("Invalid generalization declaration %s", g));
@@ -232,7 +228,6 @@ public class ParserUCD {
      */
     private void parseAttributes(Classe c, String name) {
         String type = "";
-        System.out.println("CLASS " + c.getName());
         do {
             nextToken();
             if(token == null)
@@ -258,7 +253,6 @@ public class ParserUCD {
                 case ParserUCD.STATE_TYPE_NEXT:
                     Attribut attr = new Attribut(name, type);
                     c.addAttribut(attr);
-                    System.out.println("\t" + name + " : " + type);
                     if(token.equals(","))
                         this.state = ParserUCD.STATE_IDENTIFIER;
                     else if(token.equals(ParserUCD.KEYWORD_OPERATIONS))
@@ -310,7 +304,6 @@ public class ParserUCD {
                 case ParserUCD.STATE_TYPE_NEXT:
                     op = new Operation(name, type);
                     c.addOperation(op);
-                    System.out.println(" : " + type);
                     if(token.equals(","))
                         this.state = ParserUCD.STATE_IDENTIFIER;
                     else if(token.equals(";"))
@@ -333,18 +326,15 @@ public class ParserUCD {
         Parametre p;
         boolean next;
         
-        System.out.printf("\t%s(", opName);
         
         do {
             nextToken();
             if(token.equals(")")) {
-                System.err.print(")");
                 return params;
             }
             name = token;
             sep = nextToken();
             type = nextToken();
-            System.out.printf("%s %s %s", name, sep, type);
             if((!name.matches(IDENTIFIER_FORMAT) && !sep.equals(":"))
                     && !type.matches(IDENTIFIER_FORMAT)) {
                 throw new SyntaxException(String.format("Invalid param %s in operation %s", name, opName));
@@ -358,14 +348,13 @@ public class ParserUCD {
             if(!(next || token.equals(")"))) {
                 throw new SyntaxException(String.format("Expected ',' or ')' after %s in class %s", opName, opName));
             }
-            System.out.printf("%s", token);
         }while(next);
         return params;
     }
     
 
     public void parseRelation(Model m) {
-        Relation rel;
+        Association rel;
         String relName = nextToken();
         String lclassName;
         String rclassName;
@@ -401,12 +390,10 @@ public class ParserUCD {
             throw new SyntaxException(String.format("Invalide identifier %s, %s or %s", relName, lclassName, rclassName));
         left = new Role(m.findClasse(lclassName, true), leftMult);
         right = new Role(m.findClasse(rclassName, true), rightMult);
-        rel = new Association(left, right);
-        
+        rel = new Association(relName, left, right);
+        m.addAssociation(rel);
         nextToken();
         check_token_error(";");
-        
-        System.out.println(String.format("RELATION %s\n\tROLES\n\tCLASS %s %s\n\tCLASS %s %s\n;", relName, lclassName, leftMult, rclassName, rightMult));
     }
     
     public void parseAggregation(Model m) {
@@ -441,10 +428,10 @@ public class ParserUCD {
             if(!name.matches(ParserUCD.IDENTIFIER_FORMAT))
                 throw new SyntaxException(String.format("Invalid aggregation parts identifier %s in %s", token, ag.getContainer().getClasse().getName()));
             ag.addPart(new Role(m.findClasse(name, true), mult));
+            m.addAggregation(ag);
             nextToken();
         }while(token.equals(","));
         check_token_error(";");
-        System.out.println(ag);
     }
     
     
@@ -484,6 +471,7 @@ public class ParserUCD {
         try {
             Schema schema = new Schema("Ligue.ucd");
             p.parse(schema);
+            System.out.println(schema.getModel());
         }catch(Exception e) {
             System.err.println(e.getMessage());
         }

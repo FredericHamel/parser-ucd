@@ -26,4 +26,16 @@ public class Generalization implements Comparable<Generalization> {
     public int compareTo(Generalization o) {
         return name.compareTo(o.getName());
     }
+    
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append(String.format("GENERALISATION %s\n", name));
+        sb.append("\tSUBCLASSES\n");
+        Iterator<Classe> iter = getSubClasseIterator();
+        while(iter.hasNext()) {
+            sb.append(String.format("\t\t%s\n", iter.next().getName()));
+        }
+        return sb.toString();
+    }
 }

@@ -70,4 +70,21 @@ public class Classe implements Comparable<Classe> {
     public int compareTo(Classe o) {
         return name.compareTo(o.getName());
     }
+    
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append(String.format("CLASS %s\n", name));
+        sb.append("\tATTRIBUTE\n");
+        Iterator<Attribut> iterAttr = getAttributIterator();
+        while(iterAttr.hasNext()) {
+            sb.append(String.format("\t\t%s\n", iterAttr.next()));
+        }
+        sb.append("\tOPERATION\n");
+        Iterator<Operation> iterOp = getOperationsIterator();
+        while(iterOp.hasNext()) {
+            sb.append(String.format("\t\t%s\n", iterOp.next()));
+        }
+        return sb.toString();
+    }
 }

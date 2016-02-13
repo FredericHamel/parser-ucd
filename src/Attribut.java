@@ -19,4 +19,9 @@ public final class Attribut implements Comparable<Attribut> {
 	public int compareTo(Attribut o) {
 		return this.name.compareTo(o.getName());
 	}
+        
+        @Override
+        public String toString(){
+            return String.format("%s : %s", name, type);
+        }
 }

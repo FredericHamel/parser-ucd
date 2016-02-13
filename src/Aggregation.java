@@ -13,7 +13,7 @@ import java.util.TreeSet;
  *
  * @author frederic
  */
-public class Aggregation /* extends Relation */ {
+public class Aggregation implements Comparable<Aggregation> /* extends Relation */ {
 
     private final Role container;
     private final Set<Role> parts;
@@ -52,6 +52,11 @@ public class Aggregation /* extends Relation */ {
     
     public Iterator<Role> iterator() {
         return this.parts.iterator();
+    }
+    
+    @Override
+    public int compareTo(Aggregation o) {
+        return this.container.compareTo(o.container) + (this.parts.hashCode() - o.parts.hashCode());
     }
     
     @Override

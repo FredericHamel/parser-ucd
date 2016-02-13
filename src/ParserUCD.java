@@ -119,7 +119,7 @@ public class ParserUCD {
             }else if(token.equals(ParserUCD.KEYWORD_RELATION)) {
                 parseRelation(m);
             }else if(token.equals(ParserUCD.KEYWORD_AGGREGATION)) {
-
+                parseAggregation(m);
             }else{
                 throw new SyntaxException("Syntax error");
             }
@@ -408,6 +408,46 @@ public class ParserUCD {
         
         System.out.println(String.format("RELATION %s\n\tROLES\n\tCLASS %s %s\n\tCLASS %s %s\n;", relName, lclassName, leftMult, rclassName, rightMult));
     }
+    
+    public void parseAggregation(Model m) {
+        String name;
+        Multiplicite mult;
+        Aggregation ag;
+        
+        nextToken();
+        check_token_error(ParserUCD.KEYWORD_CONTAINER);
+        
+        nextToken();
+        check_token_error(ParserUCD.KEYWORD_CLASS);
+        
+        name = nextToken();
+        if(token == null || !token.matches(ParserUCD.IDENTIFIER_FORMAT))
+            throw new SyntaxException(String.format("Invalid class identifier %s", token));
+        
+        nextToken();
+        mult = check_multiplicity_error();
+        
+        nextToken();
+        check_token_error(ParserUCD.KEYWORD_PARTS);
+        ag = new Aggregation(new Role(m.findClasse(name, true), mult));
+        do
+        {
+            nextToken();
+            check_token_error(ParserUCD.KEYWORD_CLASS);
+            name = nextToken();
+            nextToken();
+            mult = check_multiplicity_error();
+            
+            if(!name.matches(ParserUCD.IDENTIFIER_FORMAT))
+                throw new SyntaxException(String.format("Invalid aggregation parts identifier %s in %s", token, ag.getContainer().getClasse().getName()));
+            ag.addPart(new Role(m.findClasse(name, true), mult));
+            nextToken();
+        }while(token.equals(","));
+        check_token_error(";");
+        System.out.println(ag);
+    }
+    
+    
     
     private Multiplicite check_multiplicity_error() {
         Multiplicite m;

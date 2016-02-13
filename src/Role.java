@@ -20,4 +20,9 @@ public class Role implements Comparable<Role> {
     public int compareTo(Role o) {
         return o.c.compareTo(c) + o.m.compareTo(m);
     }
+    
+    @Override
+    public String toString() {
+        return String.format("CLASS %s %s", this.c.getName(), this.m.toString());
+    }
 }

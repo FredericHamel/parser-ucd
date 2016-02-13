@@ -5,6 +5,8 @@ public class Model {
 	private String name;
 	private Set<Classe> classes;
 	private Set<Relation> relation;
+        private Set<Association> assoc;
+        private Set<Aggregation> aggregation;
 	private Set<Generalization> generalizations;
 	
 	public Model(){
@@ -73,6 +75,10 @@ public class Model {
 		return g;
 	}
 	
+        public Iterator<Aggregation> getAggregationIterator() {
+            return this.aggregation.iterator();
+        }
+        
 	public Iterator<Generalization> getGeneralizationIterator() {
 		return this.generalizations.iterator();
 	}

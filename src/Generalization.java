@@ -1,29 +1,29 @@
 import java.util.*;
 
-public class Generalization {
+public class Generalization implements Comparable<Generalization> {
 	
-	private String name;
-	private Set<Classe> subClasses;
-	
-	public Generalization(String name){
-		this.name = name;
-		this.subClasses = new TreeSet<>();
-	}
-	
-	public boolean addSubClasses(Classe subClass){
-		return this.subClasses.add(subClass);
-	}
-	
-	public String getName(){
-		return this.name;
-	}
-	
-	public Iterator<Classe> getSubClasseIterator(){
-        return this.subClasses.iterator();
-	}
+    private final String name;
+    private final Set<Classe> subClasses;
 
-	
-    public int compareTo(Classe o) {
+    public Generalization(String name){
+            this.name = name;
+            this.subClasses = new TreeSet<>();
+    }
+
+    public boolean addSubClasses(Classe subClass){
+            return this.subClasses.add(subClass);
+    }
+
+    public String getName(){
+            return this.name;
+    }
+
+    public Iterator<Classe> getSubClasseIterator(){
+    return this.subClasses.iterator();
+    }
+
+    @Override  
+    public int compareTo(Generalization o) {
         return name.compareTo(o.getName());
     }
 }

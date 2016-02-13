@@ -9,7 +9,7 @@ import javax.swing.JFrame;
 
 public class MainApp {
 
-	/*public static void main(String[] args) {
+	public static void main(String[] args) {
 		
 		JFrame frame = new GUI();
 		frame.setTitle("Parser de fichiers .ucd");
@@ -17,8 +17,5 @@ public class MainApp {
 		frame.setLocationRelativeTo(null);
 		frame.setVisible(true);
 		
-	}*/
-	
-	
-
+	}
 }

@@ -43,12 +43,12 @@ public class Model {
 			if(c.getName().equals(name))
 				return c;
 		}
-                if(create) {
-                    c = new Classe(name);
-                    this.addClasse(c);
-                }
-                else
-                    c = null;
+        if(create) {
+            c = new Classe(name);
+            this.addClasse(c);
+        }
+        else
+            c = null;
                     
 		return c;
 	}

@@ -141,29 +141,26 @@ public class ParserUCD {
 
         if(token == null || !token.equals(ParserUCD.KEYWORD_SUBCLASSES))
             throw new SyntaxException(String.format("Expected SUBCLASSES in generalization %s", g.getName()));
-        nextToken();
-
-        if(token == null)
-            throw new SyntaxException(String.format("Invalid class definition in generalization %s", g.getName()));
-        
 
         // soit ';' ou identifiant operation attendu.
-        if(!token.equals(";")) {
+        if(!token.equals(";") && token != null) {
             this.state = STATE_TYPE_IDENTIFIER;
             if(!token.matches(IDENTIFIER_FORMAT))
                 throw new SyntaxException(String.format("Invalid classe definition %s in generalization %s", token, g.getName()));
             parseSubClasses(g, token, m);
+        }else{
+        	throw new SyntaxException(String.format("Invalid subclass definition in generalization %s", g.getName()));
         }
     }
     
     private void parseSubClasses(Generalization g, String name, Model m){
-        System.out.println("GENERALIZATION " + g.getName());
+        System.out.printf("GENERALIZATION " + g.getName() + "\n\t SUBCLASSES");
         do {
             nextToken();
             if(token == null)
                 throw new SyntaxException(String.format("Invalid classe declaration %s", token));
             switch(this.state) {
-                case ParserUCD.STATE_IDENTIFIER:
+                case ParserUCD.STATE_TYPE_IDENTIFIER:
                     if(!token.matches(ParserUCD.IDENTIFIER_FORMAT))
                         throw new SyntaxException(String.format("Invalid identifier %s", token));
                     name = token;
@@ -172,12 +169,14 @@ public class ParserUCD {
                 case ParserUCD.STATE_TYPE_NEXT:
                     Classe c = m.findClasse(name, true);
                     g.addSubClasses(c);
-                    System.out.println("\t" + name);
-                    if(token.equals(","))
-                        this.state = ParserUCD.STATE_IDENTIFIER;
-                    else if(token.equals(";"))
+                    System.out.printf(" " + name);
+                    if(token.equals(",")){
+                    	System.out.printf(",");
+                        this.state = ParserUCD.STATE_TYPE_IDENTIFIER;
+                    }else if(token.equals(";")){
+                    	System.out.println("\n;");
                         this.state = ParserUCD.STATE_READ;
-                    else
+                    }else
                         throw new SyntaxException(String.format("Invalid generalization declaration %s", g));
                     break;
             }
@@ -364,6 +363,7 @@ public class ParserUCD {
         return params;
     }
     
+
     public void parseRelation(Model m) {
         Relation rel;
         String relName = nextToken();

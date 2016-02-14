@@ -24,7 +24,6 @@ public class GUI extends JFrame{
 	
 	final JFileChooser fileChooser = new JFileChooser();
 	
-	//private Container topPanel;
 	private JPanel topPanel,bottomPanel, centeredPanel,leftPanel;
 	private JButton chargerButton;
 	private JTextField fieldFile; 
@@ -38,7 +37,7 @@ public class GUI extends JFrame{
 	
 	public GUI(){
 		super();
-		//Creer les composents
+		//Creer les composants
 		createComponents();
 		
 		//Taille de l'interface
@@ -138,7 +137,7 @@ public class GUI extends JFrame{
 	 */
 	public void createLeftPanel(){
 		String[] data = {"Bonjour", "lala", "lolo"};
-		leftPanel = new JPanel();//this.getContentPane();
+		leftPanel = new JPanel();
 		SpringLayout layoutLeft= new SpringLayout();		
 		leftPanel.setLayout(layoutLeft);
 		listClasses = new JList<>(data);

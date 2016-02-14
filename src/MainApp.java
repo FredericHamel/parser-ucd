@@ -17,5 +17,17 @@ public class MainApp {
 		frame.setLocationRelativeTo(null);
 		frame.setVisible(true);
 		
+		String path = frame.getFile().getAbsolutePath();	
+		
+		ParserUCD p = new ParserUCD();
+        try {
+            Schema schema = new Schema(path);
+            p.parse(schema);
+            System.out.println(schema.getModel());
+        }catch(Exception e) {
+            System.err.println(e.getMessage());
+        }
+        
+        
 	}
 }

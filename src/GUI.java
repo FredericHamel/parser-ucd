@@ -1,8 +1,6 @@
 import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Container;
 import java.awt.Dimension;
-import java.awt.GridLayout;
+
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
@@ -18,6 +16,8 @@ import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
 import javax.swing.SpringLayout;
 import javax.swing.JScrollPane;
+import javax.swing.filechooser.FileFilter;
+import javax.swing.filechooser.FileNameExtensionFilter;
 
 
 public class GUI extends JFrame{
@@ -89,7 +89,7 @@ public class GUI extends JFrame{
 	 * https://docs.oracle.com/javase/tutorial/uiswing/components/filechooser.html
 	 */
 	class AddFileListener implements ActionListener{
-
+                private FileFilter FILTER = new FileNameExtensionFilter("UCD File", "ucd");
 		@Override
 		/**
 		 * Gestion de l'action du bouton chargerButton:
@@ -98,7 +98,7 @@ public class GUI extends JFrame{
 		 * Sinon, ouverture d'une fenetre alertant l'extension ucd desiree.
 		 */
 		public void actionPerformed(ActionEvent e) {
-			
+			fileChooser.setFileFilter(FILTER);
 			if (e.getSource() == chargerButton) {
 				fileChooser.setCurrentDirectory(new java.io.File("."));
 		        int returnVal = fileChooser.showOpenDialog(topPanel);
@@ -147,6 +147,7 @@ public class GUI extends JFrame{
 		listClasses.setVisibleRowCount(-1);
 		
 		JScrollPane listScroller = new JScrollPane(listClasses);
+                listScroller.setBorder(BorderFactory.createTitledBorder("Classes"));
 		listScroller.setPreferredSize(new Dimension(130, 80));
 		
 		leftPanel.add(listScroller);
@@ -160,32 +161,33 @@ public class GUI extends JFrame{
 		centeredPanel = new JPanel();
 		centeredPanel.setLayout(new SpringLayout());
 		
-		String[] attr = {"att", "att1", "att2"};
-		String[] meth = {"meth", "meth2"};
-		String[] sub = {"sub", "sub2"};
-		String[] rel = {"rel", "rel2"};
+		listAttributes = new JList<>();
+		listMethodes = new JList<>();
+		listSubclasses = new JList<>();
+		listRelations = new JList<>();
 		
-		listAttributes = new JList<>(attr);
-		listMethodes = new JList<>(meth);
-		listSubclasses = new JList<>(sub);
-		listRelations = new JList<>(rel);
-		
-		JScrollPane listScroller1 = new JScrollPane(listAttributes);
+		JScrollPane listAttributesScroller = new JScrollPane(listAttributes);
 		//listScroller1.setPreferredSize(new Dimension(80, 80));
 		
-		JScrollPane listScroller2 = new JScrollPane(listMethodes);
+		JScrollPane listMethodesScroller = new JScrollPane(listMethodes);
 		//listScroller2.setPreferredSize(new Dimension(80, 80));
 		
-		JScrollPane listScroller3 = new JScrollPane(listSubclasses);
+		JScrollPane listSubClassesScroller = new JScrollPane(listSubclasses);
 		//listScroller3.setPreferredSize(new Dimension(80, 80));
 		
-		JScrollPane listScroller4 = new JScrollPane(listRelations);
+		JScrollPane listRelationsScroller = new JScrollPane(listRelations);
 		//listScroller4.setPreferredSize(new Dimension(80, 80));
 		
-		centeredPanel.add(listScroller1);
-		centeredPanel.add(listScroller2);
-		centeredPanel.add(listScroller3);
-		centeredPanel.add(listScroller4);
+                listAttributesScroller.setBorder(BorderFactory.createTitledBorder("Attributes"));
+                listMethodesScroller.setBorder(BorderFactory.createTitledBorder("Methodes"));
+                listSubClassesScroller.setBorder(BorderFactory.createTitledBorder("Subclasses"));
+                listRelationsScroller.setBorder(BorderFactory.createTitledBorder("Association/Aggregation"));
+                
+                
+		centeredPanel.add(listAttributesScroller);
+		centeredPanel.add(listMethodesScroller);
+		centeredPanel.add(listSubClassesScroller);
+		centeredPanel.add(listRelationsScroller);
 		
 		SpringUtilities.makeCompactGrid(centeredPanel, 2, 2, 6, 6, 6, 6);
 
@@ -196,9 +198,7 @@ public class GUI extends JFrame{
 		bottomPanel = new JPanel();
 		bottomPanel.setLayout(new SpringLayout());
 		
-		String[] data = {"details", "details1"};
-		
-		listDetails = new JList<>(data);
+		listDetails = new JList<>();
 		JScrollPane listScroller = new JScrollPane(listDetails);
 
 		bottomPanel.add(listScroller);

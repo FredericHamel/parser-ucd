@@ -18,7 +18,8 @@ import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
 import javax.swing.SpringLayout;
 import javax.swing.JScrollPane;
-
+import javax.swing.event.*;
+import javax.swing.DefaultListModel;
 
 public class GUI extends JFrame{
 	
@@ -28,6 +29,7 @@ public class GUI extends JFrame{
 	private JButton chargerButton;
 	private JTextField fieldFile; 
 	private JList<String> listClasses, listAttributes, listMethodes, listSubclasses, listRelations, listDetails;
+	DefaultListModel<String> mClasses, mAttr, mMeth, mSubC, mRel, mDet;
 	private int returnValue;
 	
 	private File file;
@@ -99,6 +101,14 @@ public class GUI extends JFrame{
 		 */
 		public void actionPerformed(ActionEvent e) {
 			
+			fieldFile.setText("");
+			mClasses.clear();
+			mAttr.clear();
+			mMeth.clear();
+			mSubC.clear();
+			mRel.clear();
+			mDet.clear();
+			
 			if (e.getSource() == chargerButton) {
 				fileChooser.setCurrentDirectory(new java.io.File("."));
 		        int returnVal = fileChooser.showOpenDialog(topPanel);
@@ -136,15 +146,31 @@ public class GUI extends JFrame{
 	 * du fichier prealablement selectionne.
 	 */
 	public void createLeftPanel(){
+		
 		String[] data = {"Bonjour", "lala", "lolo"};
+		mClasses = new DefaultListModel<String>();
+	    for (int i = 0;i < data.length; i++) {
+	      mClasses.addElement(data[i]);
+	    }
+	    
 		leftPanel = new JPanel();
 		SpringLayout layoutLeft= new SpringLayout();		
 		leftPanel.setLayout(layoutLeft);
-		listClasses = new JList<>(data);
+		listClasses = new JList<>(mClasses);
 		
 		listClasses.setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
 		listClasses.setLayoutOrientation(JList.VERTICAL);
 		listClasses.setVisibleRowCount(-1);
+		
+		listClasses.addListSelectionListener(new ListSelectionListener() {
+
+            @Override
+            public void valueChanged(ListSelectionEvent event) {
+                if (!event.getValueIsAdjusting()) {
+                  //get the name of the class selected --> listClasses.getSelectedValue().toString();
+                }
+            }
+        });
 		
 		JScrollPane listScroller = new JScrollPane(listClasses);
 		listScroller.setPreferredSize(new Dimension(130, 80));
@@ -153,22 +179,53 @@ public class GUI extends JFrame{
 
 		SpringUtilities.makeCompactGrid(leftPanel, 1, 1, 6, 6, 6, 6);
 		add(leftPanel, BorderLayout.WEST);
-		
+
 	}
 	
 	public void createCenteredPanel(){
 		centeredPanel = new JPanel();
 		centeredPanel.setLayout(new SpringLayout());
-		
+
 		String[] attr = {"att", "att1", "att2"};
 		String[] meth = {"meth", "meth2"};
 		String[] sub = {"sub", "sub2"};
 		String[] rel = {"rel", "rel2"};
 		
-		listAttributes = new JList<>(attr);
-		listMethodes = new JList<>(meth);
-		listSubclasses = new JList<>(sub);
-		listRelations = new JList<>(rel);
+		int i;
+		mAttr = new DefaultListModel<String>();
+	    for (i = 0;i < attr.length; i++) {
+	      mAttr.addElement(attr[i]);
+	    }
+		
+		mMeth = new DefaultListModel<String>();
+	    for (i = 0;i < meth.length; i++) {
+	      mMeth.addElement(meth[i]);
+	    }
+	    
+	    mSubC = new DefaultListModel<String>();
+	    for (i = 0;i < sub.length; i++) {
+	      mSubC.addElement(sub[i]);
+	    }
+	    
+	    mRel = new DefaultListModel<String>();
+	    for (i = 0;i < rel.length; i++) {
+	      mRel.addElement(rel[i]);
+	    }
+		
+		listAttributes = new JList<>(mAttr);
+		listMethodes = new JList<>(mMeth);
+		listSubclasses = new JList<>(mSubC);
+		listRelations = new JList<>(mRel);
+		
+		listRelations.addListSelectionListener(new ListSelectionListener() {
+			
+            @Override
+            public void valueChanged(ListSelectionEvent event) {
+                if (!event.getValueIsAdjusting()) {
+                  //Get the name of relation selected --> listRelations.getSelectedValue().toString());
+                }
+            }
+        });
 		
 		JScrollPane listScroller1 = new JScrollPane(listAttributes);
 		//listScroller1.setPreferredSize(new Dimension(80, 80));
@@ -195,10 +252,14 @@ public class GUI extends JFrame{
 	public void createBottomPanel(){
 		bottomPanel = new JPanel();
 		bottomPanel.setLayout(new SpringLayout());
-		
+
 		String[] data = {"details", "details1"};
-		
-		listDetails = new JList<>(data);
+		mDet = new DefaultListModel<String>();
+	    for (int i = 0;i < data.length; i++) {
+	      mDet.addElement(data[i]);
+	    }
+	    
+		listDetails = new JList<>(mDet);
 		JScrollPane listScroller = new JScrollPane(listDetails);
 
 		bottomPanel.add(listScroller);

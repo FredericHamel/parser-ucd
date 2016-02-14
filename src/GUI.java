@@ -1,6 +1,8 @@
 import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Container;
 import java.awt.Dimension;
-
+import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
@@ -16,9 +18,8 @@ import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
 import javax.swing.SpringLayout;
 import javax.swing.JScrollPane;
-import javax.swing.filechooser.FileFilter;
-import javax.swing.filechooser.FileNameExtensionFilter;
-
+import javax.swing.event.*;
+import javax.swing.DefaultListModel;
 
 public class GUI extends JFrame{
 	
@@ -28,6 +29,7 @@ public class GUI extends JFrame{
 	private JButton chargerButton;
 	private JTextField fieldFile; 
 	private JList<String> listClasses, listAttributes, listMethodes, listSubclasses, listRelations, listDetails;
+	DefaultListModel<String> mClasses, mAttr, mMeth, mSubC, mRel, mDet;
 	private int returnValue;
 	
 	private File file;
@@ -89,7 +91,7 @@ public class GUI extends JFrame{
 	 * https://docs.oracle.com/javase/tutorial/uiswing/components/filechooser.html
 	 */
 	class AddFileListener implements ActionListener{
-                private FileFilter FILTER = new FileNameExtensionFilter("UCD File", "ucd");
+
 		@Override
 		/**
 		 * Gestion de l'action du bouton chargerButton:
@@ -98,7 +100,15 @@ public class GUI extends JFrame{
 		 * Sinon, ouverture d'une fenetre alertant l'extension ucd desiree.
 		 */
 		public void actionPerformed(ActionEvent e) {
-			fileChooser.setFileFilter(FILTER);
+			
+			fieldFile.setText("");
+			mClasses.clear();
+			mAttr.clear();
+			mMeth.clear();
+			mSubC.clear();
+			mRel.clear();
+			mDet.clear();
+			
 			if (e.getSource() == chargerButton) {
 				fileChooser.setCurrentDirectory(new java.io.File("."));
 		        int returnVal = fileChooser.showOpenDialog(topPanel);
@@ -136,58 +146,103 @@ public class GUI extends JFrame{
 	 * du fichier prealablement selectionne.
 	 */
 	public void createLeftPanel(){
+		
 		String[] data = {"Bonjour", "lala", "lolo"};
+		mClasses = new DefaultListModel<String>();
+	    for (int i = 0;i < data.length; i++) {
+	      mClasses.addElement(data[i]);
+	    }
+	    
 		leftPanel = new JPanel();
 		SpringLayout layoutLeft= new SpringLayout();		
 		leftPanel.setLayout(layoutLeft);
-		listClasses = new JList<>(data);
+		listClasses = new JList<>(mClasses);
 		
 		listClasses.setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
 		listClasses.setLayoutOrientation(JList.VERTICAL);
 		listClasses.setVisibleRowCount(-1);
 		
+		listClasses.addListSelectionListener(new ListSelectionListener() {
+
+            @Override
+            public void valueChanged(ListSelectionEvent event) {
+                if (!event.getValueIsAdjusting()) {
+                  //get the name of the class selected --> listClasses.getSelectedValue().toString();
+                }
+            }
+        });
+		
 		JScrollPane listScroller = new JScrollPane(listClasses);
-                listScroller.setBorder(BorderFactory.createTitledBorder("Classes"));
 		listScroller.setPreferredSize(new Dimension(130, 80));
 		
 		leftPanel.add(listScroller);
 
 		SpringUtilities.makeCompactGrid(leftPanel, 1, 1, 6, 6, 6, 6);
 		add(leftPanel, BorderLayout.WEST);
-		
+
 	}
 	
 	public void createCenteredPanel(){
 		centeredPanel = new JPanel();
 		centeredPanel.setLayout(new SpringLayout());
+
+		String[] attr = {"att", "att1", "att2"};
+		String[] meth = {"meth", "meth2"};
+		String[] sub = {"sub", "sub2"};
+		String[] rel = {"rel", "rel2"};
 		
-		listAttributes = new JList<>();
-		listMethodes = new JList<>();
-		listSubclasses = new JList<>();
-		listRelations = new JList<>();
+		int i;
+		mAttr = new DefaultListModel<String>();
+	    for (i = 0;i < attr.length; i++) {
+	      mAttr.addElement(attr[i]);
+	    }
 		
-		JScrollPane listAttributesScroller = new JScrollPane(listAttributes);
+		mMeth = new DefaultListModel<String>();
+	    for (i = 0;i < meth.length; i++) {
+	      mMeth.addElement(meth[i]);
+	    }
+	    
+	    mSubC = new DefaultListModel<String>();
+	    for (i = 0;i < sub.length; i++) {
+	      mSubC.addElement(sub[i]);
+	    }
+	    
+	    mRel = new DefaultListModel<String>();
+	    for (i = 0;i < rel.length; i++) {
+	      mRel.addElement(rel[i]);
+	    }
+		
+		listAttributes = new JList<>(mAttr);
+		listMethodes = new JList<>(mMeth);
+		listSubclasses = new JList<>(mSubC);
+		listRelations = new JList<>(mRel);
+		
+		listRelations.addListSelectionListener(new ListSelectionListener() {
+			
+            @Override
+            public void valueChanged(ListSelectionEvent event) {
+                if (!event.getValueIsAdjusting()) {
+                  //Get the name of relation selected --> listRelations.getSelectedValue().toString());
+                }
+            }
+        });
+		
+		JScrollPane listScroller1 = new JScrollPane(listAttributes);
 		//listScroller1.setPreferredSize(new Dimension(80, 80));
 		
-		JScrollPane listMethodesScroller = new JScrollPane(listMethodes);
+		JScrollPane listScroller2 = new JScrollPane(listMethodes);
 		//listScroller2.setPreferredSize(new Dimension(80, 80));
 		
-		JScrollPane listSubClassesScroller = new JScrollPane(listSubclasses);
+		JScrollPane listScroller3 = new JScrollPane(listSubclasses);
 		//listScroller3.setPreferredSize(new Dimension(80, 80));
 		
-		JScrollPane listRelationsScroller = new JScrollPane(listRelations);
+		JScrollPane listScroller4 = new JScrollPane(listRelations);
 		//listScroller4.setPreferredSize(new Dimension(80, 80));
 		
-                listAttributesScroller.setBorder(BorderFactory.createTitledBorder("Attributes"));
-                listMethodesScroller.setBorder(BorderFactory.createTitledBorder("Methodes"));
-                listSubClassesScroller.setBorder(BorderFactory.createTitledBorder("Subclasses"));
-                listRelationsScroller.setBorder(BorderFactory.createTitledBorder("Association/Aggregation"));
-                
-                
-		centeredPanel.add(listAttributesScroller);
-		centeredPanel.add(listMethodesScroller);
-		centeredPanel.add(listSubClassesScroller);
-		centeredPanel.add(listRelationsScroller);
+		centeredPanel.add(listScroller1);
+		centeredPanel.add(listScroller2);
+		centeredPanel.add(listScroller3);
+		centeredPanel.add(listScroller4);
 		
 		SpringUtilities.makeCompactGrid(centeredPanel, 2, 2, 6, 6, 6, 6);
 
@@ -197,8 +252,14 @@ public class GUI extends JFrame{
 	public void createBottomPanel(){
 		bottomPanel = new JPanel();
 		bottomPanel.setLayout(new SpringLayout());
-		
-		listDetails = new JList<>();
+
+		String[] data = {"details", "details1"};
+		mDet = new DefaultListModel<String>();
+	    for (int i = 0;i < data.length; i++) {
+	      mDet.addElement(data[i]);
+	    }
+	    
+		listDetails = new JList<>(mDet);
 		JScrollPane listScroller = new JScrollPane(listDetails);
 
 		bottomPanel.add(listScroller);

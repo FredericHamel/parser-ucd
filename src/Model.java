@@ -4,7 +4,6 @@ public class Model {
 	
 	private String name;
 	private Set<Classe> classes;
-	private Set<Relation> relation;
         private Set<Association> assoc;
         private Set<Aggregation> aggregation;
 	private Set<Generalization> generalizations;

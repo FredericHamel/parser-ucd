@@ -45,10 +45,23 @@ public class ParserUCD {
 
     private Matcher pool;
 
+    private static ParserUCD instance;
+    private static final Object lock = new Object();
+    
+    public static ParserUCD getInstance() {
+        if(instance == null) {
+            synchronized(lock) {
+                if(instance == null)
+                    instance = new ParserUCD();
+            }
+        }
+        return instance;
+    }
+    
     /**
      * Le construteur du parseur.
      */
-    public ParserUCD() {
+    private ParserUCD() {
         this.sc = null;
         this.token = null;
         this.pool = null;
@@ -81,11 +94,13 @@ public class ParserUCD {
 
     /**
      * Parse le fichier contenant le nom fichier a parser.
-     * @param schema Le schama contenant le(s) model(s).
+     * @param fn le nom de fichier contenant le model
+     * @return le model generer
      * @throws IOException Le schema specifier n'existe pas.
      */
-    public void parse(Schema schema) throws IOException {
-        this.sc = new Scanner(new File(schema.getFilename()));
+    public Model parse(String fn) throws IOException {
+        Model model = null;
+        this.sc = new Scanner(new File(fn));
         this.sc.useDelimiter(Pattern.compile("[ \t\n]+"));
         nextToken();
         if(this.token!=null)
@@ -94,17 +109,17 @@ public class ParserUCD {
                 throw new SyntaxException("Expected MODEL");
             if(!sc.hasNext())
                 throw new SyntaxException("Reaching invalid end of file");
-            parseModel(schema);
+            model = parseModel();
         }
         sc.close();
-
+        return model;
     }
 
     /**
      * Parse le model et l'ajoute au schema.
      * @param schema le schema contenant le(s) diagramme uml.
      */
-    private void parseModel(Schema schema) {
+    private Model parseModel() {
         Model m = new Model();
         nextToken();
         if(!token.matches(IDENTIFIER_FORMAT))
@@ -125,7 +140,7 @@ public class ParserUCD {
             }
             nextToken();
         }
-        schema.setModel(m);
+        return m;
     }
     
     private void parseGeneralisation(Model m){
@@ -464,5 +479,17 @@ public class ParserUCD {
         if(token == null
                 || !token.equals(expected))
             throw new SyntaxException(String.format("Expected %s but found %s", expected, token));
+    }
+    
+    public static void main(String[] args) {
+        Model m;
+        ParserUCD parser = ParserUCD.getInstance();
+        try {
+            String fn = "Ligue.ucd";
+            m = parser.parse(fn);
+            System.out.println(m);
+        }catch(Exception e) {
+            System.err.println(e.getMessage());
+        }
     }
 }

@@ -3,6 +3,7 @@ import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.io.IOException;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -14,6 +15,7 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
 import javax.swing.SpringLayout;
+import javax.swing.SwingUtilities;
 import javax.swing.JScrollPane;
 import javax.swing.event.*;
 import javax.swing.DefaultListModel;
@@ -23,13 +25,13 @@ import java.util.ArrayList;
 
 public class GUI extends JFrame{
 
-    final JFileChooser fileChooser = new JFileChooser();
+    private final JFileChooser fileChooser = new JFileChooser();
 
     private JPanel topPanel,bottomPanel, centeredPanel,leftPanel;
     private JButton chargerButton;
     private JTextField fieldFile; 
     private JList<String> listClasses, listAttributes, listMethodes, listSubclasses, listRelations, listDetails;
-    DefaultListModel<String> mClasses, mAttr, mMeth, mSubC, mRel, mDet;
+    private DefaultListModel<String> mClasses, mAttr, mMeth, mSubC, mRel, mDet;
     private int returnValue;
 
     private File file;
@@ -37,7 +39,11 @@ public class GUI extends JFrame{
     private static final int FRAME_WIDTH = 700;
     private static final int FRAME_HEIGHT = 700;
 
+    private final Admin admin;
+
     public GUI(){
+        this.admin = Admin.getInstance();
+
         //Creer les composants
         fileChooser.setFileFilter(new FileNameExtensionFilter("UCD File", "ucd"));
 
@@ -89,7 +95,7 @@ public class GUI extends JFrame{
      * Classe interne allant chercher le fichier ucd a charger.
      * https://docs.oracle.com/javase/tutorial/uiswing/components/filechooser.html
      */
-    class AddFileListener implements ActionListener{
+    private class AddFileListener implements ActionListener{
 
         @Override
         /**
@@ -107,28 +113,49 @@ public class GUI extends JFrame{
                 if (returnVal == JFileChooser.APPROVE_OPTION) {
                     file = fileChooser.getSelectedFile();
                     if(getExtension(file).equals("ucd")){
-                        fieldFile.setText(file.getName());
-                        Admin admin = Admin.getInstance();
-                        admin.addSchema(file.getName());
-                        
+
+                        SwingUtilities.invokeLater(new Runnable() {
+                            @Override
+                            public void run() {
+                                String fn;
+
+                                fn = file.getName();
+                                fieldFile.setText(fn);
+                                try{
+                                    admin.parseModel(fn);
+
+                                    clearList();
+
+                                    ArrayList<String> classes = admin.getClassesName();
+                                    for(String c : classes)
+                                        mClasses.addElement(c);
+                                    throw new IOException();
+                                }catch(IOException exception) {
+                                    System.out.println(exception.getMessage()); 
+                                }
+                            }
+                        });
+
+
                         //Effacer les anciennes donnees
-                        fieldFile.setText("");
-                        mClasses.clear();
-                        mAttr.clear();
-                        mMeth.clear();
-                        mSubC.clear();
-                        mRel.clear();
-                        mDet.clear();
-                        
-                        ArrayList<String> classes = admin.getClassesName();
-                        for(String c : classes){
-                        	mClasses.add(c);
-                        }		
+
+
+
                     }else{
                         JOptionPane.showMessageDialog(null, "Le fichier selectionne n'est pas un .ucd. Reessayez.");
                     }
                 }
             } 		
+        }
+
+
+        private void clearList() {
+            mClasses.clear();
+            mAttr.clear();
+            mMeth.clear();
+            mSubC.clear();
+            mRel.clear();
+            mDet.clear();
         }
 
         /**
@@ -153,12 +180,12 @@ public class GUI extends JFrame{
      * du fichier prealablement selectionne.
      */
     public void createLeftPanel(){
-
-        mClasses = new DefaultListModel<String>();
+        SpringLayout layoutLeft= new SpringLayout();
+        mClasses = new DefaultListModel<>();
         leftPanel = new JPanel();
-        SpringLayout layoutLeft= new SpringLayout();		
+
         leftPanel.setLayout(layoutLeft);
-        listClasses = new JList<>();
+        listClasses = new JList<>(mClasses);
 
         listClasses.setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
         listClasses.setLayoutOrientation(JList.VERTICAL);
@@ -193,26 +220,11 @@ public class GUI extends JFrame{
         String[] sub = {"sub", "sub2"};
         String[] rel = {"rel", "rel2"};
 
-        int i;
+
         mAttr = new DefaultListModel<>();
-        for (i = 0;i < attr.length; i++) {
-            mAttr.addElement(attr[i]);
-        }
-
         mMeth = new DefaultListModel<>();
-        for (i = 0;i < meth.length; i++) {
-            mMeth.addElement(meth[i]);
-        }
-
         mSubC = new DefaultListModel<>();
-        for (i = 0;i < sub.length; i++) {
-            mSubC.addElement(sub[i]);
-        }
-
         mRel = new DefaultListModel<>();
-        for (i = 0;i < rel.length; i++) {
-            mRel.addElement(rel[i]);
-        }
 
         listAttributes = new JList<>(mAttr);
         listMethodes = new JList<>(mMeth);
@@ -268,7 +280,7 @@ public class GUI extends JFrame{
         listDetails = new JList<>(mDet);
         JScrollPane listScroller = new JScrollPane(listDetails);
         addTitle(listScroller, "Details");
-        
+
         bottomPanel.add(listScroller);
         SpringUtilities.makeCompactGrid(bottomPanel, 1, 1, 10, 10, 6, 6);
 

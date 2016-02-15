@@ -1,6 +1,8 @@
+import java.util.ArrayList;
+import java.util.Iterator;
 
 public class Schema {
-	String filename;
+	private String filename;
 	private Model m;
 	
 	public Schema(String fn) {
@@ -15,6 +17,14 @@ public class Schema {
 		return m;
 	}
 	
+        public ArrayList<String> getClassesName() {
+            ArrayList<String> list = new ArrayList<>();
+            Iterator<Classe> it = m.getClasseIterator();
+            while(it.hasNext())
+                list.add(it.next().getName());
+            return list;
+        }
+        
 	public String getFilename() {
 		return this.filename;
 	}

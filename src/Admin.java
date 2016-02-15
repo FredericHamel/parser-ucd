@@ -1,31 +1,38 @@
+import java.io.IOException;
 import java.util.*;
 
 public class Admin {
-	private final Set<Schema> schemas;
+	private Model model;
 	private static Admin instance;
+        private final ParserUCD parser;
 	
+        private static final Object lock = new Object();
+        
 	public Admin(){
-		this.schemas = new TreeSet<>();
+		this.model = null;
+                this.parser = ParserUCD.getInstance();
 	}
 	
 	public static Admin getInstance(){
 		if(instance == null){
-			instance = new Admin();
+                    synchronized(lock) {
+                        if(instance == null)
+                            instance = new Admin();
+                    }
 		}
 		return instance;
 	}
 	
-	public void addSchema(String filename){
-		Schema s = new Schema(filename);
-		this.schemas.add(s);
-		ParserUCD p = new ParserUCD();
-        p.parse(s.getFilename());
+	public void parseModel(String filename) throws IOException {
+		
+                this.model = parser.parse(filename);
 	}
 	
 	public ArrayList<String> getClassesName(){
+            Classe c = null;
 		ArrayList<String> classes = new ArrayList<>();
-		Classe c = null;
-		Iterator<Classe> it = schema.getModel().getClasseIterator();
+		
+		Iterator<Classe> it = model.getClasseIterator();
 		while(it.hasNext()) {
 			c = it.next();
 			classes.add(c.getName());

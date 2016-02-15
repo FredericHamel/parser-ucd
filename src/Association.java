@@ -14,13 +14,13 @@ public class Association extends Relation {
         super('R', a, b);
         this.name = name;
     }
-    
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append("RELATION ").append(name).append("\n\tROLES\n\t\t")
-                .append(getLeft().toString()).append("\n\t\t").append(getRight())
-                .append("\n");
+            .append(getLeft().toString()).append("\n\t\t").append(getRight())
+            .append("\n");
         return sb.toString();
     }
 }

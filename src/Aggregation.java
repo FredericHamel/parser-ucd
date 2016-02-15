@@ -17,7 +17,7 @@ public class Aggregation implements Comparable<Aggregation> /* extends Relation 
 
     private final Role container;
     private final Set<Role> parts;
-    
+
     /**
      *
      * @param container
@@ -26,15 +26,15 @@ public class Aggregation implements Comparable<Aggregation> /* extends Relation 
         this.container = container;
         this.parts = new TreeSet<>();
     }
-    
+
     public boolean addPart(Role part) {
         return this.parts.add(part);
     }
-    
+
     public boolean addParts(Set<Role> parts) {
         return this.parts.addAll(parts);
     }
-    
+
     public String getSerializeName() {
         StringBuilder sb = new StringBuilder();
         Iterator<Role> iter = iterator();
@@ -45,20 +45,20 @@ public class Aggregation implements Comparable<Aggregation> /* extends Relation 
         };
         return sb.toString();
     }
-    
+
     public Role getContainer() {
         return container;
     }
-    
+
     public Iterator<Role> iterator() {
         return this.parts.iterator();
     }
-    
+
     @Override
     public int compareTo(Aggregation o) {
         return this.container.compareTo(o.container) + (this.parts.hashCode() - o.parts.hashCode());
     }
-    
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();

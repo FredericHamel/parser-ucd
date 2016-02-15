@@ -1,7 +1,7 @@
 import java.util.*;
 
 public class Classe implements Comparable<Classe> {
-	
+
     private String name;
     private Set<Attribut> attributes;
     private Set<Operation> operations;
@@ -13,9 +13,9 @@ public class Classe implements Comparable<Classe> {
      * @param o
      */
     public Classe(String name){
-            this.name = name;
-            this.attributes = new TreeSet<>();
-            this.operations = new TreeSet<>();
+        this.name = name;
+        this.attributes = new TreeSet<>();
+        this.operations = new TreeSet<>();
     }
 
     /**
@@ -23,7 +23,7 @@ public class Classe implements Comparable<Classe> {
      * @return name
      */
     public String getName(){
-            return this.name;
+        return this.name;
     }
 
     public void addAttribut(Attribut a) {
@@ -39,7 +39,7 @@ public class Classe implements Comparable<Classe> {
      * @return attributes
      */
     public Iterator<Attribut> getAttributIterator(){
-            return this.attributes.iterator();
+        return this.attributes.iterator();
     }
 
     /**
@@ -47,13 +47,13 @@ public class Classe implements Comparable<Classe> {
      * @return operations
      */
     public Iterator<Operation> getOperationsIterator(){
-            return this.operations.iterator();
+        return this.operations.iterator();
     }
 
     public Set<Operation> findOperationByName(String name) {
         return null;
     }
-    
+
     public Operation findOperationByTypeName(String name, String type) {
         Operation op = null;
         Iterator<Operation> it = this.getOperationsIterator();
@@ -65,12 +65,12 @@ public class Classe implements Comparable<Classe> {
         }
         return op;
     }
-    
+
     @Override
     public int compareTo(Classe o) {
         return name.compareTo(o.getName());
     }
-    
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();

@@ -41,9 +41,9 @@ public class Model {
             return this.generalizations.add(g);
 	}
 	
-        public boolean addAggregation(Aggregation a) {
-            return this.aggregation.add(a);
-        }
+    public boolean addAggregation(Aggregation a) {
+        return this.aggregation.add(a);
+    }
         
 	public Classe findClasse(String name, boolean create) {
 		Classe c = null;

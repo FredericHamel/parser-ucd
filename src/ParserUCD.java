@@ -465,15 +465,4 @@ public class ParserUCD {
                 || !token.equals(expected))
             throw new SyntaxException(String.format("Expected %s but found %s", expected, token));
     }
-    
-    public static void main(String[] args) {
-        ParserUCD p = new ParserUCD();
-        try {
-            Schema schema = new Schema("Ligue.ucd");
-            p.parse(schema);
-            System.out.println(schema.getModel());
-        }catch(Exception e) {
-            System.err.println(e.getMessage());
-        }
-    }
 }

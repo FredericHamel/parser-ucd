@@ -75,12 +75,12 @@ public class Classe implements Comparable<Classe> {
     public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append(String.format("CLASS %s\n", name));
-        sb.append("\tATTRIBUTE\n");
+        sb.append("\tATTRIBUTES\n");
         Iterator<Attribut> iterAttr = getAttributIterator();
         while(iterAttr.hasNext()) {
             sb.append(String.format("\t\t%s\n", iterAttr.next()));
         }
-        sb.append("\tOPERATION\n");
+        sb.append("\tOPERATIONS\n");
         Iterator<Operation> iterOp = getOperationsIterator();
         while(iterOp.hasNext()) {
             sb.append(String.format("\t\t%s\n", iterOp.next()));

@@ -19,6 +19,7 @@ import javax.swing.event.*;
 import javax.swing.DefaultListModel;
 import javax.swing.JComponent;
 import javax.swing.filechooser.FileNameExtensionFilter;
+import java.util.ArrayList;
 
 public class GUI extends JFrame{
 
@@ -99,14 +100,6 @@ public class GUI extends JFrame{
          */
         public void actionPerformed(ActionEvent e) {
 
-            fieldFile.setText("");
-            mClasses.clear();
-            mAttr.clear();
-            mMeth.clear();
-            mSubC.clear();
-            mRel.clear();
-            mDet.clear();
-
             if (e.getSource() == chargerButton) {
                 fileChooser.setCurrentDirectory(new java.io.File("."));
                 int returnVal = fileChooser.showOpenDialog(topPanel);
@@ -115,6 +108,22 @@ public class GUI extends JFrame{
                     file = fileChooser.getSelectedFile();
                     if(getExtension(file).equals("ucd")){
                         fieldFile.setText(file.getName());
+                        Admin admin = Admin.getInstance();
+                        admin.addSchema(file.getName());
+                        
+                        //Effacer les anciennes donnees
+                        fieldFile.setText("");
+                        mClasses.clear();
+                        mAttr.clear();
+                        mMeth.clear();
+                        mSubC.clear();
+                        mRel.clear();
+                        mDet.clear();
+                        
+                        ArrayList<String> classes = admin.getClassesName();
+                        for(String c : classes){
+                        	mClasses.add(c);
+                        }		
                     }else{
                         JOptionPane.showMessageDialog(null, "Le fichier selectionne n'est pas un .ucd. Reessayez.");
                     }
@@ -145,17 +154,11 @@ public class GUI extends JFrame{
      */
     public void createLeftPanel(){
 
-        String[] data = {"Bonjour", "lala", "lolo"};
         mClasses = new DefaultListModel<String>();
-        for (int i = 0;i < data.length; i++) {
-            mClasses.addElement(data[i]);
-        }
-
         leftPanel = new JPanel();
         SpringLayout layoutLeft= new SpringLayout();		
         leftPanel.setLayout(layoutLeft);
-        listClasses = new JList<>(mClasses);
-        
+        listClasses = new JList<>();
 
         listClasses.setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
         listClasses.setLayoutOrientation(JList.VERTICAL);

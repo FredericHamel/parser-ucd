@@ -15,6 +15,6 @@ public class MainApp {
 		frame.setTitle("Parser de fichiers .ucd");
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setLocationRelativeTo(null);
-		frame.setVisible(true);        
+		frame.setVisible(true);
 	}
 }

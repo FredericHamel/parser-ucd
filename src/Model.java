@@ -1,12 +1,13 @@
 import java.util.*;
 
-public class Model {
+public class Model implements IVisitable {
 
     private String name;
     private Set<Classe> classes;
     private Set<Association> assoc;
     private Set<Aggregation> aggregation;
-    private Set<Generalization> generalizations;
+    
+    private Classe lastClasse;
 
     public Model(){
         this("");
@@ -15,9 +16,9 @@ public class Model {
     public Model(String name){
         this.name = name;
         this.classes = new TreeSet<>();
-        this.generalizations = new TreeSet<>();
         this.assoc = new TreeSet<>();
         this.aggregation = new TreeSet<>();
+        this.lastClasse = null;
     }
 
     public String getName(){
@@ -36,10 +37,6 @@ public class Model {
         return this.assoc.add(a);
     }
 
-    public boolean addGeneralization(Generalization g) {
-        return this.generalizations.add(g);
-    }
-
     public boolean addAggregation(Aggregation a) {
         return this.aggregation.add(a);
     }
@@ -47,6 +44,11 @@ public class Model {
     public Classe findClasse(String name, boolean create) {
         Classe c = null;
         Iterator<Classe> it = this.getClasseIterator();
+        
+        if(lastClasse != null && lastClasse.getName().equals(name)) {
+            return lastClasse;
+        }
+        
         while(it.hasNext()) {
             c = it.next();
             if(c.getName().equals(name))
@@ -58,27 +60,12 @@ public class Model {
         }
         else
             c = null;
+        this.lastClasse = c;
         return c;
     }
 
     public Iterator<Classe> getClasseIterator() {
         return this.classes.iterator();
-    }
-
-    public Generalization findGeneralization(String name, boolean create) {
-        Generalization g = null;
-        Iterator<Generalization> it = this.getGeneralizationIterator();
-        while(it.hasNext()) {
-            g = it.next();
-            if(g.getName().equals(name))
-                return g;
-        }
-        if(create) {
-            g = new Generalization(name);
-            this.addGeneralization(g);
-        }else
-            g = null;
-        return g;
     }
 
     public Iterator<Association> getAssociationIterator() {
@@ -89,10 +76,6 @@ public class Model {
         return this.aggregation.iterator();
     }
 
-    public Iterator<Generalization> getGeneralizationIterator() {
-        return this.generalizations.iterator();
-    }
-
     @Override
     public String toString(){
         StringBuilder sb = new StringBuilder();
@@ -100,12 +83,6 @@ public class Model {
         Iterator<Classe> cIter = getClasseIterator();
         while(cIter.hasNext()) {
             sb.append(cIter.next());
-            sb.append("\n");
-        }
-
-        Iterator<Generalization> genIter = getGeneralizationIterator();
-        while(genIter.hasNext()){
-            sb.append(genIter.next());
             sb.append("\n");
         }
 
@@ -121,5 +98,10 @@ public class Model {
             sb.append("\n");
         }         
         return sb.toString();
+    }
+    
+    @Override
+    public void accept(IVisiteur v) {
+        v.visit(this);
     }
 }

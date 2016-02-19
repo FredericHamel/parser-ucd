@@ -258,6 +258,12 @@ public class GUI extends JFrame{
             @Override
             public void valueChanged(ListSelectionEvent event) {
                 if (!event.getValueIsAdjusting()) {
+                    SwingUtilities.invokeLater(new Runnable() {
+                        @Override
+                        public void run() {
+                            mDet.setText(admin.getRelations().get(listRelations.getSelectedValue()));
+                        }
+                    });
                     //Get the name of relation selected --> listRelations.getSelectedValue().toString());
                 }
             }

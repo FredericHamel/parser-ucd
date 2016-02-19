@@ -12,7 +12,7 @@ public class Model implements IVisitable {
     public Model(){
         this("");
     }
-
+    
     public Model(String name){
         this.name = name;
         this.classes = new TreeSet<>();

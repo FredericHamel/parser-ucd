@@ -1,10 +1,11 @@
 import java.util.*;
 
-public class Classe implements Comparable<Classe> {
+public class Classe implements Comparable<Classe>, IVisitable {
 
     private String name;
     private Set<Attribut> attributes;
     private Set<Operation> operations;
+    private Set<Classe> subclasses;
 
     /**
      * Constructeur
@@ -16,6 +17,7 @@ public class Classe implements Comparable<Classe> {
         this.name = name;
         this.attributes = new TreeSet<>();
         this.operations = new TreeSet<>();
+        this.subclasses = new TreeSet<>();
     }
 
     /**
@@ -34,6 +36,10 @@ public class Classe implements Comparable<Classe> {
         operations.add(o);
     }
 
+    public void addSubclass(Classe c) {
+        this.subclasses.add(c);
+    }
+    
     /**
      * Getter arraylist of attributes
      * @return attributes
@@ -50,6 +56,10 @@ public class Classe implements Comparable<Classe> {
         return this.operations.iterator();
     }
 
+    public Iterator<Classe> getSubClasseIterator() {
+        return this.subclasses.iterator();
+    }
+    
     public Set<Operation> findOperationByName(String name) {
         return null;
     }
@@ -86,5 +96,10 @@ public class Classe implements Comparable<Classe> {
             sb.append(String.format("\t\t%s\n", iterOp.next()));
         }
         return sb.toString();
+    }
+    
+    @Override
+    public void accept(IVisiteur v) {
+        v.visit(this);
     }
 }

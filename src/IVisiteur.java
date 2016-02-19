@@ -13,7 +13,4 @@ public interface IVisiteur {
     void visit(Classe c);
     void visit(Attribut a);
     void visit(Operation o);
-    void visit(Parametre p);
-    void visit(Aggregation a);
-    void visit(Association a);
 }

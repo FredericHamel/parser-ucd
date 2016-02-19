@@ -22,6 +22,11 @@ import javax.swing.DefaultListModel;
 import javax.swing.JComponent;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import java.util.ArrayList;
+import java.util.Map;
+import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.JTextArea;
 
 public class GUI extends JFrame{
 
@@ -30,8 +35,9 @@ public class GUI extends JFrame{
     private JPanel topPanel,bottomPanel, centeredPanel,leftPanel;
     private JButton chargerButton;
     private JTextField fieldFile; 
-    private JList<String> listClasses, listAttributes, listMethodes, listSubclasses, listRelations, listDetails;
-    private DefaultListModel<String> mClasses, mAttr, mMeth, mSubC, mRel, mDet;
+    private JList<String> listClasses, listAttributes, listMethodes, listSubclasses, listRelations;
+    private DefaultListModel<String> mClasses, mAttr, mMeth, mSubC, mRel;
+    private JTextArea mDet;
     private int returnValue;
 
     private File file;
@@ -74,7 +80,8 @@ public class GUI extends JFrame{
 
         chargerButton = new JButton("Charger fichier");		
         fieldFile = new JTextField();
-
+        fieldFile.setEditable(false);
+        
         topPanel.add(chargerButton);
         topPanel.add(fieldFile);
 
@@ -119,8 +126,8 @@ public class GUI extends JFrame{
                             public void run() {
                                 String fn;
 
-                                fn = file.getName();
-                                fieldFile.setText(fn);
+                                fn = file.getAbsolutePath();
+                                fieldFile.setText(file.getName());
                                 try{
                                     admin.parseModel(fn);
 
@@ -129,6 +136,12 @@ public class GUI extends JFrame{
                                     ArrayList<String> classes = admin.getClassesName();
                                     for(String c : classes)
                                         mClasses.addElement(c);
+                                    
+                                    Map<String, String> m = admin.getRelations();
+                                    Set<String> keySet = m.keySet();
+                                    
+                                    for(String key :keySet)
+                                        mRel.addElement(key);
                                     throw new IOException();
                                 }catch(IOException exception) {
                                     System.out.println(exception.getMessage()); 
@@ -155,7 +168,6 @@ public class GUI extends JFrame{
             mMeth.clear();
             mSubC.clear();
             mRel.clear();
-            mDet.clear();
         }
 
         /**
@@ -195,8 +207,24 @@ public class GUI extends JFrame{
 
             @Override
             public void valueChanged(ListSelectionEvent event) {
+                System.out.println("Class: " + listClasses.getSelectedValue());
                 if (!event.getValueIsAdjusting()) {
-                    //get the name of the class selected --> listClasses.getSelectedValue().toString();
+                    SwingUtilities.invokeLater(new Runnable() {
+                        @Override
+                        public void run() {
+                            admin.search(listClasses.getSelectedValue());
+                            mAttr.clear();
+                            mMeth.clear();
+                            mSubC.clear();
+                            for(String attr: admin.getAttributesOfCurrentClass())
+                                mAttr.addElement(attr);
+                            for(String mth:admin.getMethodsOfCurrentClass())
+                                mMeth.addElement(mth);
+                            for(String subc : admin.getSubClasses())
+                                mSubC.addElement(subc);
+                        }
+                    });
+                    
                 }
             }
         });
@@ -214,12 +242,6 @@ public class GUI extends JFrame{
     public void createCenteredPanel(){
         centeredPanel = new JPanel();
         centeredPanel.setLayout(new SpringLayout());
-
-        String[] attr = {"att", "att1", "att2"};
-        String[] meth = {"meth", "meth2"};
-        String[] sub = {"sub", "sub2"};
-        String[] rel = {"rel", "rel2"};
-
 
         mAttr = new DefaultListModel<>();
         mMeth = new DefaultListModel<>();
@@ -271,14 +293,9 @@ public class GUI extends JFrame{
         bottomPanel = new JPanel();
         bottomPanel.setLayout(new SpringLayout());
 
-        String[] data = {"details", "details1"};
-        mDet = new DefaultListModel<>();
-        for (int i = 0;i < data.length; i++) {
-            mDet.addElement(data[i]);
-        }
-
-        listDetails = new JList<>(mDet);
-        JScrollPane listScroller = new JScrollPane(listDetails);
+        mDet = new JTextArea();
+        mDet.setEditable(false);
+        JScrollPane listScroller = new JScrollPane(mDet);
         addTitle(listScroller, "Details");
 
         bottomPanel.add(listScroller);

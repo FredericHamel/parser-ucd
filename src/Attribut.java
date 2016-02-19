@@ -1,5 +1,5 @@
 
-public final class Attribut implements Comparable<Attribut> {
+public final class Attribut implements Comparable<Attribut>, IVisitable {
     private final String name, type;
 
     public Attribut(String name, String type){
@@ -23,5 +23,10 @@ public final class Attribut implements Comparable<Attribut> {
     @Override
     public String toString(){
         return String.format("%s : %s", name, type);
+    }
+    
+    @Override
+    public void accept(IVisiteur v) {
+        v.visit(this);
     }
 }

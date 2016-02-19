@@ -8,13 +8,25 @@
  *
  * @author frederic
  */
-public class Association extends Relation {
+public class Association implements Comparable<Association> {
     private String name;
+    private final Role a;
+    private final Role b;
+
     public Association(String name, Role a, Role b) {
-        super('R', a, b);
+        this.a = a;
+        this.b = b;
         this.name = name;
     }
 
+    public String getName() { 
+        return name;
+    }
+    // class a
+    public Role getLeft() { return a; }
+    // class b
+    public Role getRight() { return b; }
+    
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
@@ -22,5 +34,9 @@ public class Association extends Relation {
             .append(getLeft().toString()).append("\n\t\t").append(getRight())
             .append("\n");
         return sb.toString();
+    }
+      @Override
+    public int compareTo(Association o) {
+        return o.a.compareTo(a) + o.b.compareTo(b);
     }
 }

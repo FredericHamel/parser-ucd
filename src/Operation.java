@@ -1,6 +1,6 @@
 import java.util.*;
 
-public class Operation implements Comparable<Operation> {
+public class Operation implements Comparable<Operation>, IVisitable {
     private String methodeName, typeReturn;
     private Set<Parametre> params;
 
@@ -49,7 +49,20 @@ public class Operation implements Comparable<Operation> {
     
     @Override
     public String toString() {
-        return String.format("%s() : %s", methodeName, typeReturn);
+        StringBuilder sb = new StringBuilder(String.format("%s %s(", typeReturn, methodeName));
+        Iterator<Parametre> iter = params.iterator();
+        if(iter.hasNext())
+            sb.append(iter.next().toString());
+        while(iter.hasNext()) {
+            sb.append(String.format(", %s", iter.next().getType()));
+        }
+        sb.append(")");
+        return sb.toString();
+    }
+
+    @Override
+    public void accept(IVisiteur obj) {
+        obj.visit(this);
     }
 }
 

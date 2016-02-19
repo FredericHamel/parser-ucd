@@ -1,5 +1,5 @@
 
-public class Parametre implements Comparable<Parametre>{
+public class Parametre implements Comparable<Parametre> {
     private String name, type;
 
     public Parametre(String name, String type){
@@ -18,5 +18,10 @@ public class Parametre implements Comparable<Parametre>{
     @Override
     public int compareTo(Parametre o) {
         return type.compareTo(o.type) + name.compareTo(o.type);
-    } 
+    }
+    
+    @Override
+    public String toString(){
+        return getType();
+    }
 }

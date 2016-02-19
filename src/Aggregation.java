@@ -38,11 +38,8 @@ public class Aggregation implements Comparable<Aggregation> /* extends Relation 
     public String getSerializeName() {
         StringBuilder sb = new StringBuilder();
         Iterator<Role> iter = iterator();
-        sb.append("(A)");
-        while(iter.hasNext()) {
-            sb.append(" P_");
-            sb.append(iter.next());
-        };
+        sb.append("(A) P_");
+        sb.append(container.getClasse().getName());
         return sb.toString();
     }
 

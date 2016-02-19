@@ -145,30 +145,30 @@ public class ParserUCD {
     
     private void parseGeneralisation(Model m){
     	int state = ParserUCD.STATE_TYPE_SEPARATOR;
-    	Generalization g = null;
+        Classe c;
         nextToken();
 
         if(token == null || !token.matches(ParserUCD.IDENTIFIER_FORMAT))
             throw new SyntaxException(String.format("Invalid generalization name %s", token == null ? "null": token));
-        g = m.findGeneralization(token, true);
+         c = m.findClasse(token, true);
         
         nextToken();
 
         if(token == null || !token.equals(ParserUCD.KEYWORD_SUBCLASSES))
-            throw new SyntaxException(String.format("Expected SUBCLASSES in generalization %s", g.getName()));
+            throw new SyntaxException(String.format("Expected SUBCLASSES in generalization %s", c.getName()));
 
         // soit ';' ou identifiant operation attendu.
         if(!token.equals(";") && token != null) {
             this.state = STATE_TYPE_IDENTIFIER;
             if(!token.matches(IDENTIFIER_FORMAT))
-                throw new SyntaxException(String.format("Invalid classe definition %s in generalization %s", token, g.getName()));
-            parseSubClasses(g, token, m);
+                throw new SyntaxException(String.format("Invalid classe definition %s in generalization %s", token, c.getName()));
+            parseSubClasses(c, token, m);
         }else{
-        	throw new SyntaxException(String.format("Invalid subclass definition in generalization %s", g.getName()));
+        	throw new SyntaxException(String.format("Invalid subclass definition in generalization %s", c.getName()));
         }
     }
     
-    private void parseSubClasses(Generalization g, String name, Model m){
+    private void parseSubClasses(Classe classe, String name, Model m){
         do {
             nextToken();
             if(token == null)
@@ -182,13 +182,13 @@ public class ParserUCD {
                     break;
                 case ParserUCD.STATE_TYPE_NEXT:
                     Classe c = m.findClasse(name, true);
-                    g.addSubClasses(c);
+                    classe.addSubclass(c);
                     if(token.equals(",")){
                         this.state = ParserUCD.STATE_TYPE_IDENTIFIER;
                     }else if(token.equals(";")){
                         this.state = ParserUCD.STATE_READ;
                     }else
-                        throw new SyntaxException(String.format("Invalid generalization declaration %s", g));
+                        throw new SyntaxException(String.format("Invalid generalization declaration %s", c));
                     break;
             }
         } while(this.state != ParserUCD.STATE_READ);
@@ -318,6 +318,7 @@ public class ParserUCD {
                     break;
                 case ParserUCD.STATE_TYPE_NEXT:
                     op = new Operation(name, type);
+                    op.addParams(params);
                     c.addOperation(op);
                     if(token.equals(","))
                         this.state = ParserUCD.STATE_IDENTIFIER;

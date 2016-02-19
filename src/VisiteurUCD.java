@@ -1,5 +1,7 @@
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 
 /*
  * To change this license header, choose License Headers in Project Properties.
@@ -19,16 +21,18 @@ public class VisiteurUCD implements IVisiteur {
     private Classe c;
     private ArrayList<String> attributs, methods, subClasse;
     
+    
     public VisiteurUCD(String classname){
         this.name=classname;
         this.attributs = new ArrayList<>();
         this.methods = new ArrayList<>();
+        this.subClasse = new ArrayList<>();
     }
     
     @Override
     public void visit(Model m) {
         this.m = m;
-        this.c = m.findClasse(name, false);
+        this.c = this.m.findClasse(name, false);
         this.c.accept(this);
     }
 
@@ -41,13 +45,11 @@ public class VisiteurUCD implements IVisiteur {
         while(oper.hasNext())
             oper.next().accept(this);
         Classe sub;
-        Iterator<Classe> it = null;
+        Iterator<Classe> it = c.getSubClasseIterator();
         while(it.hasNext()){
             sub = it.next();
             subClasse.add(String.format("CLASS %s", sub.getName()));
-        }
-            
-            
+        }            
     }
 
     @Override
@@ -60,13 +62,14 @@ public class VisiteurUCD implements IVisiteur {
         this.methods.add(o.toString());
     }
 
-    @Override
-    public void visit(Aggregation a) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public ArrayList<String> getMethods() {
+        return this.methods;
     }
 
-    @Override
-    public void visit(Association a) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public ArrayList<String> getAttributs() {
+        return this.attributs;
+    }
+    public ArrayList<String> getSubClasses() {
+        return this.subClasse;
     }
 }

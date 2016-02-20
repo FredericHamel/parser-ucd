@@ -28,6 +28,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JTextArea;
 import java.awt.Container;
+import java.awt.Color;
 
 public class GUI extends JFrame{
 
@@ -59,6 +60,7 @@ public class GUI extends JFrame{
         this.content = new JPanel();
         layout = new SpringLayout();
         content.setLayout(layout);
+        
         createComponents();
     }
     
@@ -68,11 +70,10 @@ public class GUI extends JFrame{
     private void createComponents(){
 
         createTopPanel();
-        createLeftPanel();
         createCenteredPanel();
         createBottomPanel();
+        
         SpringUtilities.makeCompactGrid(content, 3, 1, 6, 6, 6, 6);
-
         this.add(content, BorderLayout.CENTER);
     }
 
@@ -100,9 +101,9 @@ public class GUI extends JFrame{
         //Contrainte de position avec SpringLayout pour le bouton
         layoutTop.putConstraint(SpringLayout.WEST, chargerButton, 5, SpringLayout.WEST, topPanel);
         layoutTop.putConstraint(SpringLayout.NORTH, chargerButton, 5, SpringLayout.NORTH, topPanel);
-
+        
         SpringUtilities.makeCompactGrid(topPanel, 1, 2, 6, 6, 6, 6);
-
+        topPanel.setBorder(BorderFactory.createEmptyBorder(2, 2, 2, 2));
         //add(topPanel, BorderLayout.NORTH);
         content.add(topPanel);
         ActionListener listener = new AddFileListener();
@@ -156,14 +157,13 @@ public class GUI extends JFrame{
                                         ArrayList<String> classes = admin.getClassesName();
                                         for(String c : classes)
                                             mClasses.addElement(c);
-                                        listClasses.addSelectionInterval(0, 0);
+                                        listClasses.addSelectionInterval(0, 0);//Premier item selectionne
                                         
                                         Map<String, String> m = admin.getRelations();
                                         Set<String> keySet = m.keySet();
-                                        
                                         for(String key :keySet)
                                             mRel.addElement(key);
-                                        listRelations.addSelectionInterval(0, 0);
+                                        listRelations.addSelectionInterval(0, 0);//Premier item selectionne
                                         
                                     }catch(IOException exception) {
                                         System.out.println(exception.getMessage()); 
@@ -219,22 +219,26 @@ public class GUI extends JFrame{
 
     }
 
+
     /**
      * Creation du container de gauche qui affiche toutes les classes 
      * du fichier prealablement selectionne.
+     * Creation du panel de centre/est qui est compose des listes
+     * d'attributs, de methodes et de sous classes correspondant
+     * a la classe selectionnee dans la liste des classes.
      */
-    public void createLeftPanel(){
-        SpringLayout layoutLeft= new SpringLayout();
+    public void createCenteredPanel(){
+    	centeredPanel = new JPanel();
+        centeredPanel.setLayout(new SpringLayout());
         mClasses = new DefaultListModel<>();
-        leftPanel = new JPanel();
 
-        leftPanel.setLayout(layoutLeft);
         listClasses = new JList<>(mClasses);
+        listClasses.setBorder(BorderFactory.createMatteBorder(1, 1, 1, 1, Color.gray));
 
         listClasses.setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
         listClasses.setLayoutOrientation(JList.VERTICAL);
         listClasses.setVisibleRowCount(-1);
-
+        
         listClasses.addListSelectionListener(new ListSelectionListener() {
 
             @Override
@@ -262,25 +266,21 @@ public class GUI extends JFrame{
 
         JScrollPane listScroller = new JScrollPane(listClasses);
         addTitle(listScroller, "Classes");
-        leftPanel.add(listScroller);
-    }
-
-    /**
-     * Creation du panel de centre/est qui est compose des listes
-     * d'attributs, de methodes et de sous classes correspondant
-     * a la classe selectionnee dans la liste des classes.
-     */
-    public void createCenteredPanel(){
-        centeredPanel = new JPanel();
-        centeredPanel.setLayout(new SpringLayout());
+        centeredPanel.add(listScroller);
+        
 
         mAttr = new DefaultListModel<>();
         mMeth = new DefaultListModel<>();
         mSubC = new DefaultListModel<>();
 
         listAttributes = new JList<>(mAttr);
+        listAttributes.setBorder(BorderFactory.createMatteBorder(1, 1, 1, 1, Color.gray));
+
         listMethodes = new JList<>(mMeth);
+        listMethodes.setBorder(BorderFactory.createMatteBorder(1, 1, 1, 1, Color.gray));
+        
         listSubclasses = new JList<>(mSubC);
+        listSubclasses.setBorder(BorderFactory.createMatteBorder(1, 1, 1, 1, Color.gray));
 
         JScrollPane listScroller1 = new JScrollPane(listAttributes);
         addTitle(listScroller1, "Attributs");
@@ -295,12 +295,9 @@ public class GUI extends JFrame{
         centeredPanel.add(listScroller2);
         centeredPanel.add(listScroller3);
 
-        SpringUtilities.makeCompactGrid(centeredPanel, 1, 3, 6, 6, 6, 6);
-        
-        leftPanel.add(centeredPanel);
-        SpringUtilities.makeCompactGrid(leftPanel, 1, 2, 6, 6, 6, 6);
-
-        content.add(leftPanel);
+        SpringUtilities.makeCompactGrid(centeredPanel, 1, 4, 6, 6, 6, 6);
+        centeredPanel.setBorder(BorderFactory.createEmptyBorder(2, 2, 2, 2));
+        content.add(centeredPanel);
     }
 
     /**
@@ -317,6 +314,10 @@ public class GUI extends JFrame{
         //Liste des relations du model
         mRel = new DefaultListModel<>();
         listRelations = new JList<>(mRel);
+        listRelations.setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
+        listRelations.setLayoutOrientation(JList.VERTICAL);
+        listRelations.setVisibleRowCount(-1);
+        listRelations.setBorder(BorderFactory.createMatteBorder(1, 1, 1, 1, Color.gray));
         JScrollPane listScrollerRelation = new JScrollPane(listRelations);
         addTitle(listScrollerRelation, "Association/Aggregation");
         listScrollerRelation.setMaximumSize(new Dimension(40, 80));
@@ -324,9 +325,11 @@ public class GUI extends JFrame{
         //Liste des details de relations
         mDet = new JTextArea();
         mDet.setEditable(false);
+        mDet.setBorder(BorderFactory.createMatteBorder(1, 1, 1, 1, Color.gray));
         JScrollPane listScroller = new JScrollPane(mDet);
         addTitle(listScroller, "Details");
         listScroller.setPreferredSize(new Dimension(80, 80));
+        listScroller.getViewport().setBackground(Color.blue);
 
         
         /**
@@ -356,7 +359,7 @@ public class GUI extends JFrame{
         bottomPanel.add(listScrollerRelation);
         bottomPanel.add(listScroller);
         SpringUtilities.makeCompactGrid(bottomPanel, 1, 2, 5, 5, 6, 6);
-
+        bottomPanel.setBorder(BorderFactory.createEmptyBorder(2, 2, 2, 2));
         //Ajout du panel du bas au frame principal
         content.add(bottomPanel);
     }
@@ -374,6 +377,7 @@ public class GUI extends JFrame{
      */
     private void addTitle(JComponent comp, String title) {
         comp.setBorder(BorderFactory.createTitledBorder(title));
+        comp.setOpaque(false);
     }
 
 }

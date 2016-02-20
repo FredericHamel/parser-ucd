@@ -3,14 +3,8 @@ import java.util.Iterator;
 import java.util.Set;
 import java.util.TreeSet;
 
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-
 /**
- *
+ * Classe Aggregation represente une relation du type aggregation dans notre model.
  * @author frederic
  */
 public class Aggregation implements Comparable<Aggregation> /* extends Relation */ {
@@ -19,7 +13,7 @@ public class Aggregation implements Comparable<Aggregation> /* extends Relation 
     private final Set<Role> parts;
 
     /**
-     *
+     * Constructeur
      * @param container
      */
     public Aggregation(Role container) {

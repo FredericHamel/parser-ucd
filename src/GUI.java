@@ -27,6 +27,7 @@ import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JTextArea;
+import java.awt.Container;
 
 public class GUI extends JFrame{
 
@@ -39,11 +40,12 @@ public class GUI extends JFrame{
     private DefaultListModel<String> mClasses, mAttr, mMeth, mSubC, mRel;
     private JTextArea mDet;
     private int returnValue;
-
-    private File file;
-
-    private static final int FRAME_WIDTH = 700;
-    private static final int FRAME_HEIGHT = 700;
+    private Container content;
+    private SpringLayout layout;
+    private static final int FRAME_WIDTH = 800;
+    private static final int FRAME_HEIGHT = 600;
+    
+    private File file, fileSelected;
 
     private final Admin admin;
 
@@ -52,18 +54,26 @@ public class GUI extends JFrame{
 
         //Creer les composants
         fileChooser.setFileFilter(new FileNameExtensionFilter("UCD File", "ucd"));
-
+        setSize(new Dimension(FRAME_WIDTH, FRAME_HEIGHT));
+        
+        this.content = new JPanel();
+        layout = new SpringLayout();
+        content.setLayout(layout);
         createComponents();
-        setSize(FRAME_WIDTH, FRAME_HEIGHT);
     }
-
+    
+    /**
+     * Appel des methodes creatrices des differents panels
+     */
     private void createComponents(){
 
         createTopPanel();
         createLeftPanel();
         createCenteredPanel();
         createBottomPanel();
+        SpringUtilities.makeCompactGrid(content, 3, 1, 6, 6, 6, 6);
 
+        this.add(content, BorderLayout.CENTER);
     }
 
     /**
@@ -74,25 +84,27 @@ public class GUI extends JFrame{
     public void createTopPanel(){
 
         //Creation du Container topPanel et utilisation du layout SpringLayout
-        topPanel = new JPanel();//this.getContentPane();		
+        topPanel = new JPanel();	
         SpringLayout layoutTop = new SpringLayout();		
         topPanel.setLayout(layoutTop);
 
         chargerButton = new JButton("Charger fichier");		
-        fieldFile = new JTextField();
+        fieldFile = new JTextField(20);
         fieldFile.setEditable(false);
         
+        topPanel.setMinimumSize(new Dimension(0, 30));
+        topPanel.setMaximumSize(new Dimension(0, 30));
         topPanel.add(chargerButton);
         topPanel.add(fieldFile);
-
+        
         //Contrainte de position avec SpringLayout pour le bouton
         layoutTop.putConstraint(SpringLayout.WEST, chargerButton, 5, SpringLayout.WEST, topPanel);
         layoutTop.putConstraint(SpringLayout.NORTH, chargerButton, 5, SpringLayout.NORTH, topPanel);
 
         SpringUtilities.makeCompactGrid(topPanel, 1, 2, 6, 6, 6, 6);
 
-        add(topPanel, BorderLayout.NORTH);
-
+        //add(topPanel, BorderLayout.NORTH);
+        content.add(topPanel);
         ActionListener listener = new AddFileListener();
         chargerButton.addActionListener(listener);
 
@@ -118,50 +130,70 @@ public class GUI extends JFrame{
                 int returnVal = fileChooser.showOpenDialog(topPanel);
 
                 if (returnVal == JFileChooser.APPROVE_OPTION) {
-                    file = fileChooser.getSelectedFile();
-                    if(getExtension(file).equals("ucd")){
-
-                        SwingUtilities.invokeLater(new Runnable() {
-                            @Override
-                            public void run() {
-                                String fn;
-
-                                fn = file.getAbsolutePath();
-                                fieldFile.setText(file.getName());
-                                try{
-                                    admin.parseModel(fn);
-
-                                    clearList();
-
-                                    ArrayList<String> classes = admin.getClassesName();
-                                    for(String c : classes)
-                                        mClasses.addElement(c);
-                                    
-                                    Map<String, String> m = admin.getRelations();
-                                    Set<String> keySet = m.keySet();
-                                    
-                                    for(String key :keySet)
-                                        mRel.addElement(key);
-                                    throw new IOException();
-                                }catch(IOException exception) {
-                                    System.out.println(exception.getMessage()); 
-                                }
-                            }
-                        });
-
-
-                        //Effacer les anciennes donnees
-
-
-
+                    fileSelected = fileChooser.getSelectedFile();
+                    boolean same;
+                    if(file == null){
+                    	same = false;
                     }else{
-                        JOptionPane.showMessageDialog(null, "Le fichier selectionne n'est pas un .ucd. Reessayez.");
+                    	same = compareFile(fileSelected, file);
+                    }
+                    if(!same){
+                    	file = fileSelected;
+                    	if(getExtension(file).equals("ucd")){
+
+                            SwingUtilities.invokeLater(new Runnable() {
+                            	
+                                @Override
+                                public void run() {
+                                    String fn;
+                                    fn = file.getAbsolutePath();
+                                    fieldFile.setText(file.getName());
+                                    try{
+                                        admin.parseModel(fn);
+
+                                        clearList();
+
+                                        ArrayList<String> classes = admin.getClassesName();
+                                        for(String c : classes)
+                                            mClasses.addElement(c);
+                                        listClasses.addSelectionInterval(0, 0);
+                                        
+                                        Map<String, String> m = admin.getRelations();
+                                        Set<String> keySet = m.keySet();
+                                        
+                                        for(String key :keySet)
+                                            mRel.addElement(key);
+                                        listRelations.addSelectionInterval(0, 0);
+                                        
+                                    }catch(IOException exception) {
+                                        System.out.println(exception.getMessage()); 
+                                    }
+                                }
+                            });
+                        }else{
+                            JOptionPane.showMessageDialog(null, "Le fichier selectionne n'est pas un .ucd. Reessayez.");
+                        }	
                     }
                 }
             } 		
         }
 
+        public boolean compareFile(File newFile, File currentFile){
+        	String path1 = newFile.getAbsolutePath();
+            String path2 = currentFile.getAbsolutePath();
 
+            if (path1.equals(path2)) {
+			    //System.out.println("The paths locate the same file!");
+			    return true;
+			} else {
+			    //System.out.println("The paths does not locate the same file!");
+			    return false;
+			}
+        }
+        
+        /**
+         * Vider les listes, textfields et textarea.
+         */
         private void clearList() {
             mClasses.clear();
             mAttr.clear();
@@ -207,7 +239,6 @@ public class GUI extends JFrame{
 
             @Override
             public void valueChanged(ListSelectionEvent event) {
-                System.out.println("Class: " + listClasses.getSelectedValue());
                 if (!event.getValueIsAdjusting()) {
                     SwingUtilities.invokeLater(new Runnable() {
                         @Override
@@ -230,15 +261,15 @@ public class GUI extends JFrame{
         });
 
         JScrollPane listScroller = new JScrollPane(listClasses);
-        listScroller.setPreferredSize(new Dimension(130, 80));
         addTitle(listScroller, "Classes");
         leftPanel.add(listScroller);
-
-        SpringUtilities.makeCompactGrid(leftPanel, 1, 1, 6, 6, 6, 6);
-        add(leftPanel, BorderLayout.WEST);
-
     }
 
+    /**
+     * Creation du panel de centre/est qui est compose des listes
+     * d'attributs, de methodes et de sous classes correspondant
+     * a la classe selectionnee dans la liste des classes.
+     */
     public void createCenteredPanel(){
         centeredPanel = new JPanel();
         centeredPanel.setLayout(new SpringLayout());
@@ -246,69 +277,90 @@ public class GUI extends JFrame{
         mAttr = new DefaultListModel<>();
         mMeth = new DefaultListModel<>();
         mSubC = new DefaultListModel<>();
-        mRel = new DefaultListModel<>();
 
         listAttributes = new JList<>(mAttr);
         listMethodes = new JList<>(mMeth);
         listSubclasses = new JList<>(mSubC);
-        listRelations = new JList<>(mRel);
 
+        JScrollPane listScroller1 = new JScrollPane(listAttributes);
+        addTitle(listScroller1, "Attributs");
+
+        JScrollPane listScroller2 = new JScrollPane(listMethodes);
+        addTitle(listScroller2, "Methodes");
+
+        JScrollPane listScroller3 = new JScrollPane(listSubclasses);
+        addTitle(listScroller3, "Sous-classes");
+
+        centeredPanel.add(listScroller1);
+        centeredPanel.add(listScroller2);
+        centeredPanel.add(listScroller3);
+
+        SpringUtilities.makeCompactGrid(centeredPanel, 1, 3, 6, 6, 6, 6);
+        
+        leftPanel.add(centeredPanel);
+        SpringUtilities.makeCompactGrid(leftPanel, 1, 2, 6, 6, 6, 6);
+
+        content.add(leftPanel);
+    }
+
+    /**
+     * Creation du panel composant le bas du GUI:
+     * liste des relations ou chaque element est selectionnable et 
+     * textearea contenant les details des relations correspondantes.
+     */
+    public void createBottomPanel(){
+    	//Composant du bas
+        bottomPanel = new JPanel();
+        bottomPanel.setLayout(new SpringLayout());
+        bottomPanel.setMinimumSize(new Dimension(80, 80));
+        
+        //Liste des relations du model
+        mRel = new DefaultListModel<>();
+        listRelations = new JList<>(mRel);
+        JScrollPane listScrollerRelation = new JScrollPane(listRelations);
+        addTitle(listScrollerRelation, "Association/Aggregation");
+        listScrollerRelation.setMaximumSize(new Dimension(40, 80));
+        
+        //Liste des details de relations
+        mDet = new JTextArea();
+        mDet.setEditable(false);
+        JScrollPane listScroller = new JScrollPane(mDet);
+        addTitle(listScroller, "Details");
+        listScroller.setPreferredSize(new Dimension(80, 80));
+
+        
+        /**
+         * Listener de la liste des relations
+         */
         listRelations.addListSelectionListener(new ListSelectionListener() {
 
+        	/**
+        	 * Detection du changement de selection de la liste des relations.
+        	 * Affichage des details correspondants a la relation selectionnee.
+        	 */
             @Override
             public void valueChanged(ListSelectionEvent event) {
                 if (!event.getValueIsAdjusting()) {
                     SwingUtilities.invokeLater(new Runnable() {
                         @Override
                         public void run() {
+                        	//Affichage des details de la relation
                             mDet.setText(admin.getRelations().get(listRelations.getSelectedValue()));
                         }
                     });
-                    //Get the name of relation selected --> listRelations.getSelectedValue().toString());
                 }
             }
         });
-
-        JScrollPane listScroller1 = new JScrollPane(listAttributes);
-        addTitle(listScroller1, "Attributes");
-        //listScroller1.setPreferredSize(new Dimension(80, 80));
-
-        JScrollPane listScroller2 = new JScrollPane(listMethodes);
-        addTitle(listScroller2, "Methodes");
-        //listScroller2.setPreferredSize(new Dimension(80, 80));
-
-        JScrollPane listScroller3 = new JScrollPane(listSubclasses);
-        addTitle(listScroller3, "SubClasses");
-        //listScroller3.setPreferredSize(new Dimension(80, 80));
-
-        JScrollPane listScroller4 = new JScrollPane(listRelations);
-        addTitle(listScroller4, "Association/Aggregation");
-        //listScroller4.setPreferredSize(new Dimension(80, 80));
-
-        centeredPanel.add(listScroller1);
-        centeredPanel.add(listScroller2);
-        centeredPanel.add(listScroller3);
-        centeredPanel.add(listScroller4);
-
-        SpringUtilities.makeCompactGrid(centeredPanel, 2, 2, 6, 6, 6, 6);
-
-        add(centeredPanel, BorderLayout.CENTER);
-    }
-
-    public void createBottomPanel(){
-        bottomPanel = new JPanel();
-        bottomPanel.setLayout(new SpringLayout());
-
-        mDet = new JTextArea();
-        mDet.setEditable(false);
-        JScrollPane listScroller = new JScrollPane(mDet);
-        addTitle(listScroller, "Details");
-
+        
+        //Ajout de la liste des relations et des details au panel du bas
+        bottomPanel.add(listScrollerRelation);
         bottomPanel.add(listScroller);
-        SpringUtilities.makeCompactGrid(bottomPanel, 1, 1, 10, 10, 6, 6);
+        SpringUtilities.makeCompactGrid(bottomPanel, 1, 2, 5, 5, 6, 6);
 
-        add(bottomPanel, BorderLayout.SOUTH);
+        //Ajout du panel du bas au frame principal
+        content.add(bottomPanel);
     }
+    
 
     /**
      * @return file de type File, le fichier selectionne.
@@ -317,7 +369,9 @@ public class GUI extends JFrame{
         return file;
     }
 
-
+    /**
+     * Ajouter un titre aux differents composants
+     */
     private void addTitle(JComponent comp, String title) {
         comp.setBorder(BorderFactory.createTitledBorder(title));
     }

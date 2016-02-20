@@ -48,7 +48,7 @@ public class VisiteurUCD implements IVisiteur {
         Iterator<Classe> it = c.getSubClasseIterator();
         while(it.hasNext()){
             sub = it.next();
-            subClasse.add(String.format("CLASS %s", sub.getName()));
+            subClasse.add(String.format("%s", sub.getName()));
         }            
     }
 

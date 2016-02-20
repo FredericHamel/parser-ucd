@@ -1,7 +1,17 @@
-
+/**
+ * 
+ * @author Frederic Hamel et Sabrina Ouaret
+ * La classe attribut represente un attribut d'une classe dans notre model.
+ * Elle implemente Comparable<Attribut> et IVisitable.
+ */
 public final class Attribut implements Comparable<Attribut>, IVisitable {
     private final String name, type;
 
+    /**
+     * Constructeur
+     * @param name, le nom de l'attribut
+     * @param type, le type de l'attribut
+     */
     public Attribut(String name, String type){
         this.name = name;
         this.type = type;

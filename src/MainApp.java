@@ -1,6 +1,9 @@
-
 import javax.swing.JFrame;
 
+/**
+ * Methode main qui permet de lancer l'application. 
+ * @author Frederic Hamel et Sabrina Ouaret
+ */
 
 public class MainApp {
 

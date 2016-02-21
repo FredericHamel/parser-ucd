@@ -505,6 +505,11 @@ public class ParserUCD {
             throw new SyntaxException(String.format("Expected %s but found %s", expected, token));
     }
     
+    /**
+     * La declaration d'un main dans ce fichier nous a permis de 
+     * debugger la lecture du fichier.
+     */
+    /*
     public static void main(String[] args) {
         Model m;
         ParserUCD parser = ParserUCD.getInstance();
@@ -515,5 +520,5 @@ public class ParserUCD {
         }catch(Exception e) {
             System.err.println(e.getMessage());
         }
-    }
+    }*/
 }

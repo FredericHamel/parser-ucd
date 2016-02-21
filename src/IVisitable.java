@@ -1,17 +1,13 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+/**
+ * Interface IVisitable. Les classes qui seront visitees
+ * implementeront celle-ci.
+ * @author Frederic Hamel et Sabrina Ouaret
  */
 
-/**
- *
- * @author frederic
- */
 public interface IVisitable {
 
     /**
-     * Accept le visiteur.
+     * Accepte le visiteur.
      * @param obj le visiteur.
      */
     void accept(IVisiteur obj);

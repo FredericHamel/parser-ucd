@@ -1,3 +1,7 @@
+/**
+ * Classe SyntaxException herite de RuntimeException.
+ * @author Frederic Hamel et Sabrina Ouaret
+ */
 
 public class SyntaxException extends RuntimeException {
 	/**

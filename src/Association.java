@@ -5,8 +5,9 @@
  */
 
 /**
- *
- * @author frederic
+ * Classe representant une relation d'association nommee entre
+ * deux classes a et b. 
+ * @author Frederic Hamel et Sabrina Ouaret
  */
 public class Association implements Comparable<Association> {
     private String name;

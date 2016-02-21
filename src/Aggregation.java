@@ -5,7 +5,7 @@ import java.util.TreeSet;
 
 /**
  * Classe Aggregation represente une relation du type aggregation dans notre model.
- * @author frederic
+ * @author Frederic Hamel et Sabrina Ouaret
  */
 public class Aggregation implements Comparable<Aggregation> /* extends Relation */ {
 

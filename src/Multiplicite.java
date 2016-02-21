@@ -1,4 +1,7 @@
-
+/**
+ * Enumerateur de multiplicite utilise pour les relations. 
+ * @author Frederic Hamel et Sabrina Ouaret
+ */
 public enum Multiplicite
 {
     ONE,

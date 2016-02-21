@@ -3,7 +3,7 @@ import java.util.*;
 
 /**
  * 
- * @authors Frederic Hamel et Sabrina Ouaret
+ * @author Frederic Hamel et Sabrina Ouaret
  * La classe Admin permet de faire le lien entre la base de donnees qui
  * compose un fichier.ucd( un model ) et l'interface graphique.
  * Cette classe est un singleton.
@@ -31,7 +31,7 @@ public class Admin {
     }
 
     /**
-     * GetInstance retourne l'instance et la créer si elle n'existe pas déjà.
+     * getInstance retourne l'instance ou la creer si elle n'existe pas deja.
      * Singleton.
      */
     public static Admin getInstance(){

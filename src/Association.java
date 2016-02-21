@@ -1,9 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-
 /**
  * Classe representant une relation d'association nommee entre
  * deux classes a et b. 
@@ -14,12 +8,20 @@ public class Association implements Comparable<Association> {
     private final Role a;
     private final Role b;
 
+    /**
+     * Constructeur
+     * @param name, le nom de l'association.
+     * @param a, @param b les roles des classes.
+     */
     public Association(String name, Role a, Role b) {
         this.a = a;
         this.b = b;
         this.name = name;
     }
 
+    /**
+     * @return name, le nom de l'association
+     */
     public String getName() { 
         return name;
     }
@@ -28,6 +30,10 @@ public class Association implements Comparable<Association> {
     // class b
     public Role getRight() { return b; }
     
+    /**
+     * Override de toString, permettant le debuggage
+     * du parsing du fichier seulement.
+     */
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
@@ -36,6 +42,10 @@ public class Association implements Comparable<Association> {
             .append("\n");
         return sb.toString();
     }
+    
+    /**
+     * Redefinition de compareTo selon les roles de l'association
+     */
       @Override
     public int compareTo(Association o) {
         return o.a.compareTo(a) + o.b.compareTo(b);

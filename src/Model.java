@@ -15,6 +15,10 @@ public class Model implements IVisitable {
     
     private Classe lastClasse;
     
+    public Model(){
+    	this("");
+    }
+    
     /**
      * Constructeur Model
      * @param name, le nom du model.

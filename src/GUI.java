@@ -34,7 +34,7 @@ public class GUI extends JFrame{
 
     private final JFileChooser fileChooser = new JFileChooser();
 
-    private JPanel topPanel,bottomPanel, centeredPanel,leftPanel;
+    private JPanel topPanel,bottomPanel, centeredPanel,leftPanel, firstCenteredPanel, firstInfoPanel, secondInfoPanel;
     private JButton chargerButton;
     private JTextField fieldFile; 
     private JList<String> listClasses, listAttributes, listMethodes, listSubclasses, listRelations;
@@ -144,6 +144,11 @@ public class GUI extends JFrame{
 
                             SwingUtilities.invokeLater(new Runnable() {
                             	
+                            	/**
+                            	 * Contact entre le GUI et l'admin.
+                            	 * Demande a l'admin d'aller chercher les informations
+                            	 * necessaires a afficher.
+                            	 */
                                 @Override
                                 public void run() {
                                     String fn;
@@ -178,15 +183,18 @@ public class GUI extends JFrame{
             } 		
         }
 
+        /**
+         * Comparaison des paths de fichiers.
+         * Permet de distinguer si c'est un nouveau fichier qui est charge
+         * ou non, selon le path.
+         */
         public boolean compareFile(File newFile, File currentFile){
         	String path1 = newFile.getAbsolutePath();
             String path2 = currentFile.getAbsolutePath();
 
             if (path1.equals(path2)) {
-			    //System.out.println("The paths locate the same file!");
 			    return true;
 			} else {
-			    //System.out.println("The paths does not locate the same file!");
 			    return false;
 			}
         }
@@ -230,6 +238,23 @@ public class GUI extends JFrame{
     public void createCenteredPanel(){
     	centeredPanel = new JPanel();
         centeredPanel.setLayout(new SpringLayout());
+        
+        centeredPanel.setBorder(BorderFactory.createEmptyBorder(2, 2, 2, 2));
+        
+    	createClassePanel();
+    	createInfoPanel();
+    	
+    	SpringUtilities.makeCompactGrid(centeredPanel, 1, 2, 6, 6, 6, 6);
+    	
+        content.add(centeredPanel);
+    }
+    
+    /**
+     * Creation du panneau de gauche contenant la liste des classes.
+     * S'ajoute au panneau du centre: centeredPanel.
+     */
+    public void createClassePanel(){
+
         mClasses = new DefaultListModel<>();
 
         listClasses = new JList<>(mClasses);
@@ -239,6 +264,7 @@ public class GUI extends JFrame{
         listClasses.setLayoutOrientation(JList.VERTICAL);
         listClasses.setVisibleRowCount(-1);
         
+        //ActionListener appele lors d'un clic sur une selection de nom de classe.
         listClasses.addListSelectionListener(new ListSelectionListener() {
 
             @Override
@@ -266,39 +292,66 @@ public class GUI extends JFrame{
 
         JScrollPane listScroller = new JScrollPane(listClasses);
         addTitle(listScroller, "Classes");
+        listScroller.setMaximumSize(new Dimension(40, 60));
         centeredPanel.add(listScroller);
+    }
+    	
+    /**
+     * Creation d'un panneau d'une ligne et deux colonnes regroupant attributs et sous-classe.
+     * Creation d'un panneau plus large contenant les methodes.
+     * Creation d'un troisieme panneau de deux lignes et une colonne qui regroupe les deux
+     * derniers panneau.
+     * Ce dernier panneau est ajoute a centeredPanel.
+     */
+    public void createInfoPanel(){
+    	firstCenteredPanel = new JPanel();
+    	firstCenteredPanel.setLayout(new SpringLayout());
+    	
+    	//Panneau regroupant les informations sur les attributs et sous-classes.
+    	firstInfoPanel = new JPanel();
+    	firstInfoPanel.setLayout(new SpringLayout());
         
-
         mAttr = new DefaultListModel<>();
-        mMeth = new DefaultListModel<>();
-        mSubC = new DefaultListModel<>();
-
         listAttributes = new JList<>(mAttr);
         listAttributes.setBorder(BorderFactory.createMatteBorder(1, 1, 1, 1, Color.gray));
-
-        listMethodes = new JList<>(mMeth);
-        listMethodes.setBorder(BorderFactory.createMatteBorder(1, 1, 1, 1, Color.gray));
-        
-        listSubclasses = new JList<>(mSubC);
-        listSubclasses.setBorder(BorderFactory.createMatteBorder(1, 1, 1, 1, Color.gray));
-
         JScrollPane listScroller1 = new JScrollPane(listAttributes);
         addTitle(listScroller1, "Attributs");
+        
+        mSubC = new DefaultListModel<>();
+        listSubclasses = new JList<>(mSubC);
+        listSubclasses.setBorder(BorderFactory.createMatteBorder(1, 1, 1, 1, Color.gray));
+        JScrollPane listScroller2 = new JScrollPane(listSubclasses);
+        addTitle(listScroller2, "Sous-classes");
+        
+        firstInfoPanel.add(listScroller1);
+        firstInfoPanel.add(listScroller2);
+        SpringUtilities.makeCompactGrid(firstInfoPanel, 1, 2, 6, 6, 6, 6);
 
-        JScrollPane listScroller2 = new JScrollPane(listMethodes);
-        addTitle(listScroller2, "Methodes");
+        firstCenteredPanel.add(firstInfoPanel);
+        
+        //Panneau plus large pour un meilleur affichage des methodes
+    	secondInfoPanel = new JPanel();
+    	secondInfoPanel.setLayout(new SpringLayout());
 
-        JScrollPane listScroller3 = new JScrollPane(listSubclasses);
-        addTitle(listScroller3, "Sous-classes");
+    	mMeth = new DefaultListModel<>();
+        listMethodes = new JList<>(mMeth);
+        listMethodes.setBorder(BorderFactory.createMatteBorder(1, 1, 1, 1, Color.gray));
+        JScrollPane listScroller3 = new JScrollPane(listMethodes);
+        addTitle(listScroller3, "Methodes");
+        listScroller3.setMinimumSize(new Dimension(120, 80));
+        
+        //Ajout de la liste de methodes au panneau secondInfoPanel
+        secondInfoPanel.add(listScroller3);
+        SpringUtilities.makeCompactGrid(secondInfoPanel, 1, 1, 6, 6, 6, 6);
 
-        centeredPanel.add(listScroller1);
-        centeredPanel.add(listScroller2);
-        centeredPanel.add(listScroller3);
+        //Ajout du panneau des methodes au panneau qui regroupe attribut, sous-classe et methode
+        firstCenteredPanel.add(secondInfoPanel);
+        SpringUtilities.makeCompactGrid(firstCenteredPanel, 2, 1, 6, 6, 6, 6);
 
-        SpringUtilities.makeCompactGrid(centeredPanel, 1, 4, 6, 6, 6, 6);
-        centeredPanel.setBorder(BorderFactory.createEmptyBorder(2, 2, 2, 2));
-        content.add(centeredPanel);
+        //Ajout du panneau de groupe au panneau central qui contient les classes.
+        centeredPanel.add(firstCenteredPanel);
     }
+
 
     /**
      * Creation du panel composant le bas du GUI:
@@ -309,7 +362,7 @@ public class GUI extends JFrame{
     	//Composant du bas
         bottomPanel = new JPanel();
         bottomPanel.setLayout(new SpringLayout());
-        bottomPanel.setMinimumSize(new Dimension(80, 80));
+        bottomPanel.setMinimumSize(new Dimension(80, 40));
         
         //Liste des relations du model
         mRel = new DefaultListModel<>();

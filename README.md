@@ -2,7 +2,7 @@
 
 Compilation
 =======================
-1. Executer pour compiler la commande:
+1. Executer pour compiler les commandes suivantes dans l'ordre:
 	* mkdir bin
 	* javac -d bin -sourcepath src src/*.java
 

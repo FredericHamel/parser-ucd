@@ -7,6 +7,9 @@ import java.util.TreeSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+/**
+ * La class correspondant au parser de fichier de type ucd.
+ */
 public class ParserUCD {
     public static final String IDENTIFIER_FORMAT = "[A-Za-z_]+[0-9A-Za-z_]*";
     public static final Pattern TOKEN_FORMAT = Pattern.compile("([0-9A-Za-z_]+|[,:;()])");
@@ -47,7 +50,11 @@ public class ParserUCD {
 
     private static ParserUCD instance;
     private static final Object lock = new Object();
-    
+   
+    /**
+     * La methode utilise pour accéder a l'unique instance.
+     * @return l'instance de ParserUCD.
+     */
     public static ParserUCD getInstance() {
         if(instance == null) {
             synchronized(lock) {
@@ -58,9 +65,6 @@ public class ParserUCD {
         return instance;
     }
     
-    /**
-     * Le construteur du parseur.
-     */
     private ParserUCD() {
         this.sc = null;
         this.token = null;
@@ -70,7 +74,7 @@ public class ParserUCD {
     }
 
     /**
-     * Methode utilise pour acceder au prochain token.
+     * Méthode utilisé pour acceder au prochain token.
      * @return le prochain token.
      */
     public String nextToken() {
@@ -117,7 +121,7 @@ public class ParserUCD {
 
     /**
      * Parse le model et l'ajoute au schema.
-     * @param schema le schema contenant le(s) diagramme uml.
+     * @return Retourne le model charger du fichier. 
      */
     private Model parseModel() {
         Model m = new Model();
@@ -143,6 +147,10 @@ public class ParserUCD {
         return m;
     }
     
+    /**
+     * Parse un generalization
+     * @param m le model
+     */
     private void parseGeneralisation(Model m){
     	int state = ParserUCD.STATE_TYPE_SEPARATOR;
         Classe c;
@@ -284,7 +292,7 @@ public class ParserUCD {
      * @param c la classe courrante.
      * @param name le nom de l'a premiere operation.
      */
-    public void parseOperations(Classe c, String name) {
+    private void parseOperations(Classe c, String name) {
         String type = "";
         Set<Parametre> params = null;
         Operation op = null;
@@ -336,7 +344,7 @@ public class ParserUCD {
      * @param opName le nom de l'operation courrant.
      * @return l'ensemble des operation parser.
      */
-    public Set<Parametre> parseParameters(String opName) {
+    private Set<Parametre> parseParameters(String opName) {
         Set<Parametre> params = new TreeSet<>();
         String name, sep, type;
         Parametre p;
@@ -368,8 +376,11 @@ public class ParserUCD {
         return params;
     }
     
-
-    public void parseRelation(Model m) {
+    /**
+     * Parse une relation
+     * @param m le model
+     */
+    private void parseRelation(Model m) {
         Association rel;
         String relName = nextToken();
         String lclassName;
@@ -412,7 +423,11 @@ public class ParserUCD {
         check_token_error(";");
     }
     
-    public void parseAggregation(Model m) {
+    /**
+     * Parse une aggregation
+     * @param m le model
+     */
+    private void parseAggregation(Model m) {
         String name;
         Multiplicite mult;
         Aggregation ag;
@@ -450,8 +465,11 @@ public class ParserUCD {
         check_token_error(";");
     }
     
-    
-    
+    /**
+     * Verifie si le dernier token corresponds a une Multiplicite
+     * valide
+     * @return la multiplicity correspondante.
+     */
     private Multiplicite check_multiplicity_error() {
         Multiplicite m;
         switch(token) {
@@ -476,6 +494,11 @@ public class ParserUCD {
         return m;
     }
     
+    /**
+     * Verifie si le token corresponds a la chaine expected.
+     * @param la chain expected.
+     * @throws SyntaxException si le token != expected
+     */
     private void check_token_error(String expected) {
         if(token == null
                 || !token.equals(expected))

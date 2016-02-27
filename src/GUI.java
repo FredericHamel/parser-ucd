@@ -34,11 +34,11 @@ public class GUI extends JFrame{
 
     private final JFileChooser fileChooser = new JFileChooser();
 
-    private JPanel topPanel,bottomPanel, centeredPanel,leftPanel, firstCenteredPanel, firstInfoPanel, secondInfoPanel;
-    private JButton chargerButton;
+    private JPanel topPanel,bottomPanel, centeredPanel,leftPanel, firstCenteredPanel, firstInfoPanel, secondInfoPanel, rightPanel;
+    private JButton chargerButton, metriquesButton;
     private JTextField fieldFile; 
-    private JList<String> listClasses, listAttributes, listMethodes, listSubclasses, listRelations;
-    private DefaultListModel<String> mClasses, mAttr, mMeth, mSubC, mRel;
+    private JList<String> listClasses, listAttributes, listMethodes, listSubclasses, listRelations, listMetriques;
+    private DefaultListModel<String> mClasses, mAttr, mMeth, mSubC, mRel, mMetriques;
     private JTextArea mDet;
     private int returnValue;
     private Container content;
@@ -92,23 +92,37 @@ public class GUI extends JFrame{
         chargerButton = new JButton("Charger fichier");		
         fieldFile = new JTextField(20);
         fieldFile.setEditable(false);
+        metriquesButton = new JButton("Charger métriques");
         
         topPanel.setMinimumSize(new Dimension(0, 30));
         topPanel.setMaximumSize(new Dimension(0, 30));
         topPanel.add(chargerButton);
         topPanel.add(fieldFile);
+        topPanel.add(metriquesButton);
         
         //Contrainte de position avec SpringLayout pour le bouton
         layoutTop.putConstraint(SpringLayout.WEST, chargerButton, 5, SpringLayout.WEST, topPanel);
         layoutTop.putConstraint(SpringLayout.NORTH, chargerButton, 5, SpringLayout.NORTH, topPanel);
+        layoutTop.putConstraint(SpringLayout.WEST, metriquesButton, 8, SpringLayout.EAST, topPanel);
+        layoutTop.putConstraint(SpringLayout.NORTH, metriquesButton, 5, SpringLayout.NORTH, topPanel);
         
-        SpringUtilities.makeCompactGrid(topPanel, 1, 2, 6, 6, 6, 6);
+        SpringUtilities.makeCompactGrid(topPanel, 1, 3, 6, 6, 6, 6);
         topPanel.setBorder(BorderFactory.createEmptyBorder(2, 2, 2, 2));
-        //add(topPanel, BorderLayout.NORTH);
         content.add(topPanel);
+
         ActionListener listener = new AddFileListener();
         chargerButton.addActionListener(listener);
-
+        
+        ActionListener listenerMetriques = new AddMetriquesListener();
+        metriquesButton.addActionListener(listenerMetriques);
+    }
+    
+    private class AddMetriquesListener implements ActionListener{
+    	
+    	@Override
+    	public void actionPerformed(ActionEvent e){
+    		
+    	}
     }
 
     /**
@@ -243,8 +257,9 @@ public class GUI extends JFrame{
         
     	createClassePanel();
     	createInfoPanel();
+    	createRightPanel();
     	
-    	SpringUtilities.makeCompactGrid(centeredPanel, 1, 2, 6, 6, 6, 6);
+    	SpringUtilities.makeCompactGrid(centeredPanel, 1, 3, 6, 6, 6, 6);
     	
         content.add(centeredPanel);
     }
@@ -352,6 +367,28 @@ public class GUI extends JFrame{
         centeredPanel.add(firstCenteredPanel);
     }
 
+    
+    public void createRightPanel(){
+    	rightPanel = new JPanel();
+    	rightPanel.setLayout(new SpringLayout());
+    	rightPanel.setMinimumSize(new Dimension(80, 40));
+    	
+    	mMetriques = new DefaultListModel<>();
+    	listMetriques = new JList<>(mMetriques);
+    	listMetriques.setBorder(BorderFactory.createMatteBorder(1, 1, 1, 1, Color.gray));
+
+    	listMetriques.setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
+    	listMetriques.setLayoutOrientation(JList.VERTICAL);
+    	listMetriques.setVisibleRowCount(-1);
+    	
+    	JScrollPane listScroller = new JScrollPane(listMetriques);
+        addTitle(listScroller, "Métriques");
+        listScroller.setMaximumSize(new Dimension(40, 60));
+        rightPanel.add(listScroller);
+        SpringUtilities.makeCompactGrid(rightPanel, 1, 1, 6, 6, 6, 6);
+        centeredPanel.add(rightPanel);
+    }
+    
 
     /**
      * Creation du panel composant le bas du GUI:

@@ -39,7 +39,7 @@ public class GUI extends JFrame{
     private JTextField fieldFile; 
     private JList<String> listClasses, listAttributes, listMethodes, listSubclasses, listRelations, listMetriques;
     private DefaultListModel<String> mClasses, mAttr, mMeth, mSubC, mRel, mMetriques;
-    private JTextArea mDet;
+    private JTextArea mDet, definitions;
     private int returnValue;
     private Container content;
     private SpringLayout layout;
@@ -371,7 +371,7 @@ public class GUI extends JFrame{
     public void createRightPanel(){
     	rightPanel = new JPanel();
     	rightPanel.setLayout(new SpringLayout());
-    	rightPanel.setMinimumSize(new Dimension(80, 40));
+    	//rightPanel.setMinimumSize(new Dimension(40, 80));
     	
     	mMetriques = new DefaultListModel<>();
     	listMetriques = new JList<>(mMetriques);
@@ -383,9 +383,21 @@ public class GUI extends JFrame{
     	
     	JScrollPane listScroller = new JScrollPane(listMetriques);
         addTitle(listScroller, "Métriques");
-        listScroller.setMaximumSize(new Dimension(40, 60));
+        //listScroller.setMinimumSize(new Dimension(40, 60));
         rightPanel.add(listScroller);
-        SpringUtilities.makeCompactGrid(rightPanel, 1, 1, 6, 6, 6, 6);
+        
+        definitions = new JTextArea(1, 5);
+        definitions.setLineWrap(true);
+        definitions.setWrapStyleWord(true);
+        definitions.setBorder(BorderFactory.createMatteBorder(1, 1, 1, 1, Color.gray));
+        definitions.setFont(definitions.getFont().deriveFont(12f));
+        
+        JScrollPane listScrollerDefinitions = new JScrollPane(definitions);
+        addTitle(listScrollerDefinitions, "Définitions");
+       // listScrollerDefinitions.setMaximumSize(new Dimension(10, 20));
+        rightPanel.add(listScrollerDefinitions);
+
+        SpringUtilities.makeCompactGrid(rightPanel, 2, 1, 6, 6, 6, 6);
         centeredPanel.add(rightPanel);
     }
     
@@ -417,7 +429,7 @@ public class GUI extends JFrame{
         mDet.setEditable(false);
         mDet.setBorder(BorderFactory.createMatteBorder(1, 1, 1, 1, Color.gray));
         JScrollPane listScroller = new JScrollPane(mDet);
-        addTitle(listScroller, "Details");
+        addTitle(listScroller, "Détails");
         listScroller.setPreferredSize(new Dimension(80, 80));
         listScroller.getViewport().setBackground(Color.blue);
 

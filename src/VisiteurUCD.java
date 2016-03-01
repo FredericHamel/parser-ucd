@@ -12,7 +12,6 @@ import java.util.Map;
 public class VisiteurUCD implements IVisiteur {
 
     private String name;
-    
     private Model m;
     private Classe c;
     private ArrayList<String> attributs, methods, subClasse;

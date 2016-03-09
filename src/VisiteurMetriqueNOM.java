@@ -3,10 +3,10 @@ import java.util.Set;
 import java.util.TreeSet;
 
 public class VisiteurMetriqueNOM implements IVisiteur {
-    private String name;
+    private final String name;
     private Model model;
     private Metrique metrique;
-    private Set<Operation> operationCounter;
+    private final Set<Operation> operationCounter;
     
     public VisiteurMetriqueNOM(String name) {
         this.name = name;
@@ -21,6 +21,7 @@ public class VisiteurMetriqueNOM implements IVisiteur {
     public void visit(Model m) {
         this.model = m;
         m.findClasse(this.name, false).accept(this);
+        this.metrique = new Metrique("NOM", this.operationCounter.size());
     }
 
     @Override
@@ -31,7 +32,6 @@ public class VisiteurMetriqueNOM implements IVisiteur {
             if(c.hasParent())
                 c.getParent().accept(this);
         }
-        this.metrique = new Metrique("NOM", this.operationCounter.size());
     }
 
     @Override

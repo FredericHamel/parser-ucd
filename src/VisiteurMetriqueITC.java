@@ -33,6 +33,7 @@ public class VisiteurMetriqueITC implements IVisiteur {
     public void visit(Model m) {
         this.model = m;
         m.findClasse(this.name, false).accept(this);
+        this.metrique = new Metrique("ITC", this.parametresCounter.size());
     }
 
     @Override
@@ -49,7 +50,6 @@ public class VisiteurMetriqueITC implements IVisiteur {
             if(c.hasParent())
                 c.getParent().accept(this);
         }
-        this.metrique = new Metrique("ITC", this.parametresCounter.size());
     }
 
     @Override

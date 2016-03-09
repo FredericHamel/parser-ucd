@@ -29,6 +29,7 @@ public class VisiteurMetriqueNOA implements IVisiteur {
     public void visit(Model m) {
         this.model = m;
         m.findClasse(this.name, false).accept(this);
+        this.metrique = new Metrique("NOA", this.attributCounter.size());
     }
 
     @Override
@@ -39,7 +40,7 @@ public class VisiteurMetriqueNOA implements IVisiteur {
             if(c.hasParent())
                 c.getParent().accept(this);
         }
-        this.metrique = new Metrique("NOA", this.attributCounter.size());
+       
     }
 
     @Override

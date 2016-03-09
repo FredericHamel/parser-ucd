@@ -7,11 +7,11 @@ import java.util.*;
 
 public class Classe implements Comparable<Classe>, IVisitable {
 
-    private String name;
+    private final String name;
     private Classe parent;
-    private Set<Attribut> attributes;
-    private Set<Operation> operations;
-    private Set<Classe> subclasses;
+    private final Set<Attribut> attributes;
+    private final Set<Operation> operations;
+    private final Set<Classe> subclasses;
 
     /**
      * Constructeur
@@ -36,7 +36,8 @@ public class Classe implements Comparable<Classe>, IVisitable {
     public Classe getParent() {
         return this.parent;
     }
-
+    
+    
     public boolean hasParent() {
         return this.parent != null;
     }

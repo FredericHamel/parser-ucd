@@ -1,3 +1,4 @@
+import gui.GUI;
 import javax.swing.JFrame;
 
 /**

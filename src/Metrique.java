@@ -7,8 +7,10 @@ public class Metrique {
 	public Metrique(String name,double value){
 		this.name = name;
 		for(Definition d : Definition.values()){
-			if(d.equals(this.name))
+			if(d.equals(this.name)) {
 				this.definition = d.getDefinition();
+                break;
+            }
 		}
 		this.value = value;
 	}

@@ -8,6 +8,7 @@ import java.util.*;
 public class Classe implements Comparable<Classe>, IVisitable {
 
     private String name;
+    private Classe parent;
     private Set<Attribut> attributes;
     private Set<Operation> operations;
     private Set<Classe> subclasses;
@@ -21,6 +22,7 @@ public class Classe implements Comparable<Classe>, IVisitable {
         this.attributes = new TreeSet<>();
         this.operations = new TreeSet<>();
         this.subclasses = new TreeSet<>();
+        this.parent = null;
     }
 
     /**
@@ -29,6 +31,18 @@ public class Classe implements Comparable<Classe>, IVisitable {
      */
     public String getName(){
         return this.name;
+    }
+
+    public Classe getParent() {
+        return this.parent;
+    }
+
+    public boolean hasParent() {
+        return this.parent != null;
+    }
+    
+    private void setParent(Classe c) {
+        this.parent = c; // Ajoute le parent;
     }
 
     /**
@@ -52,6 +66,7 @@ public class Classe implements Comparable<Classe>, IVisitable {
      * @param c, la sous-classe a ajouter.
      */
     public void addSubclass(Classe c) {
+        c.setParent(this);
         this.subclasses.add(c);
     }
     

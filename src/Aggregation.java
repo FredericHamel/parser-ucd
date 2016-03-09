@@ -54,7 +54,7 @@ public class Aggregation implements Comparable<Aggregation> /* extends Relation 
     public Role getContainer() {
         return container;
     }
-
+    
     /**
      * @return l'iterateur de Role
      */

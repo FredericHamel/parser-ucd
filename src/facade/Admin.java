@@ -6,16 +6,16 @@ import parserucd.Model;
 import parserucd.Association;
 import parserucd.ParserUCD;
 import parserucd.VisiteurUCD;
+import metric.*;
+
 import java.io.IOException;
 import java.util.*;
 
 /**
- * 
  * @author Frederic Hamel et Sabrina Ouaret
  * La classe Admin permet de faire le lien entre la base de donnees qui
  * compose un fichier.ucd( un model ) et l'interface graphique.
  * Cette classe est un singleton.
- *
  */
 public class Admin {
 	
@@ -25,6 +25,17 @@ public class Admin {
     private Map<String, String> relations;
     
     private VisiteurUCD v;
+    private VisiteurMetriqueANA vANA;
+    private VisiteurMetriqueCAC vCAC;    
+    private VisiteurMetriqueCLD vCLD;
+    private VisiteurMetriqueDIT vDIT;
+    private VisiteurMetriqueETC vETC;
+    private VisiteurMetriqueITC vITC;
+    private VisiteurMetriqueNOA vNOA;
+    private VisiteurMetriqueNOC vNOC;
+    private VisiteurMetriqueNOD vNOD;
+    private VisiteurMetriqueNOM vNOM;
+   
     
     private static final Object lock = new Object();
 
@@ -106,7 +117,50 @@ public class Admin {
     public void search(String name) {
         this.v = new VisiteurUCD(name);
         this.v.visit(this.model);
+        visiteMetrique(name);
     }
+    
+    public void visiteMetrique(String name){
+    	this.vANA = new VisiteurMetriqueANA(name);
+        this.vANA.visit(this.model);
+        this.vCAC = new VisiteurMetriqueCAC(name);
+        this.vCAC.visit(this.model);
+        this.vCLD = new VisiteurMetriqueCLD(name);
+        this.vCLD.visit(this.model);
+        this.vDIT = new VisiteurMetriqueDIT(name);
+        this.vDIT.visit(this.model);
+        this.vETC = new VisiteurMetriqueETC(name);
+        this.vETC.visit(this.model);
+        this.vITC = new VisiteurMetriqueITC(name);
+        this.vITC.visit(this.model);
+        this.vNOA = new VisiteurMetriqueNOA(name);
+        this.vNOA.visit(this.model);
+        this.vNOC = new VisiteurMetriqueNOC(name);
+        this.vNOC.visit(this.model);
+        this.vNOD = new VisiteurMetriqueNOD(name);
+        this.vNOD.visit(this.model);
+        this.vNOM = new VisiteurMetriqueNOM(name);
+        this.vNOM.visit(this.model);
+    }
+    
+    /**
+     * @return liste des metriques de la classe courante selectionnee
+     */
+    public ArrayList<Metrique> getMetriquesOfCurrentClass(){
+    	ArrayList<Metrique> list = new ArrayList<>();
+    	list.add(this.vANA.getMetrique());
+    	list.add(this.vCAC.getMetrique());
+    	list.add(this.vCLD.getMetrique());
+    	list.add(this.vDIT.getMetrique());
+    	list.add(this.vETC.getMetrique());
+    	list.add(this.vITC.getMetrique());
+    	list.add(this.vNOA.getMetrique());
+    	list.add(this.vNOC.getMetrique());
+    	list.add(this.vNOD.getMetrique());
+    	list.add(this.vNOM.getMetrique());
+    	return list;
+    }
+    
     
     /**
      * @return liste des methodes de la classe courante selectionnee

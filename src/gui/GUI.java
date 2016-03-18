@@ -1,12 +1,17 @@
 package gui;
 
 import facade.Admin;
+import metric.Metrique;
+import metric.CSVFileCreator;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
+import java.util.Locale;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -31,12 +36,14 @@ import javax.swing.JTextArea;
 import java.awt.Container;
 import java.awt.Color;
 
+import java.io.FileWriter;
+
 public class GUI extends JFrame{
 
     private final JFileChooser fileChooser = new JFileChooser();
 
     private JPanel topPanel,bottomPanel, centeredPanel,leftPanel, firstCenteredPanel, firstInfoPanel, secondInfoPanel, rightPanel;
-    private JButton chargerButton, metriquesButton;
+    private JButton chargerButton, metriquesButton, csvButton;
     private JTextField fieldFile; 
     private JList<String> listClasses, listAttributes, listMethodes, listSubclasses, listRelations, listMetriques;
     private DefaultListModel<String> mClasses, mAttr, mMeth, mSubC, mRel, mMetriques;
@@ -94,12 +101,16 @@ public class GUI extends JFrame{
         fieldFile = new JTextField(20);
         fieldFile.setEditable(false);
         metriquesButton = new JButton("Charger métriques");
+        metriquesButton.setEnabled(false); 
+        csvButton = new JButton("Créer .csv");
+        csvButton.setEnabled(false); 
         
         topPanel.setMinimumSize(new Dimension(0, 30));
         topPanel.setMaximumSize(new Dimension(0, 30));
         topPanel.add(chargerButton);
         topPanel.add(fieldFile);
         topPanel.add(metriquesButton);
+        topPanel.add(csvButton);
         
         //Contrainte de position avec SpringLayout pour le bouton
         layoutTop.putConstraint(SpringLayout.WEST, chargerButton, 5, SpringLayout.WEST, topPanel);
@@ -107,7 +118,7 @@ public class GUI extends JFrame{
         layoutTop.putConstraint(SpringLayout.WEST, metriquesButton, 8, SpringLayout.EAST, topPanel);
         layoutTop.putConstraint(SpringLayout.NORTH, metriquesButton, 5, SpringLayout.NORTH, topPanel);
         
-        SpringUtilities.makeCompactGrid(topPanel, 1, 3, 6, 6, 6, 6);
+        SpringUtilities.makeCompactGrid(topPanel, 1, 4, 6, 6, 6, 6);
         topPanel.setBorder(BorderFactory.createEmptyBorder(2, 2, 2, 2));
         content.add(topPanel);
 
@@ -116,13 +127,69 @@ public class GUI extends JFrame{
         
         ActionListener listenerMetriques = new AddMetriquesListener();
         metriquesButton.addActionListener(listenerMetriques);
+        
+        ActionListener listenerCSV = new CreateCSVListener();
+        csvButton.addActionListener(listenerCSV);
+    }
+    
+    /**
+     * Fonction creatrice du fichier .csv contenant les metriques des classes
+     * du model courant.
+     */
+    private class CreateCSVListener implements ActionListener{
+    	@Override
+    	public void actionPerformed(ActionEvent e){
+    		String name_file = file.getName().split(".ucd")[0];
+    		String name_csv = "Metriques_Model" + name_file + ".csv";
+    		
+    		try{
+    		    FileWriter w = new FileWriter(name_csv);
+    	 
+    		    w.append("CLASSE,");
+    		    w.append("ANA,");
+    		    w.append("NOM,");
+    		    w.append("NOA,");
+    		    w.append("ITC,");
+    		    w.append("ETC,");
+    		    w.append("CAC,");
+    		    w.append("DIT,");
+    		    w.append("CLD,");
+    		    w.append("NOC,");
+    		    w.append("NOD");
+    		    w.append("\n");
+
+    		    /*
+    		     *Boucle qui lit les valeurs
+    		     *pour chaque classe.
+    		     */
+    		    ArrayList<String> c = admin.getClassesName();
+    		    ArrayList<Metrique> m = new ArrayList<>();
+    		    for(String classe : c){
+    		    	w.append(classe);
+    		    	admin.search(classe);
+    		    	m = admin.getMetriquesOfCurrentClass();
+    		    	for(Metrique metrique: m){
+    		    		DecimalFormat numberFormat = new DecimalFormat("0.##", new DecimalFormatSymbols(Locale.US));
+    		            w.append(", "+numberFormat.format(metrique.getValue()));
+    		    	}
+    		    	w.append("\n");
+    		    }
+    		    				
+    		    w.flush();
+    		    w.close();
+    		    
+    		}catch(IOException exception){
+    		     exception.printStackTrace();
+    		} 
+    	}
     }
     
     private class AddMetriquesListener implements ActionListener{
     	
     	@Override
     	public void actionPerformed(ActionEvent e){
-    		
+    		listMetriques.setVisible(true);
+    		definitions.setVisible(true);
     	}
     }
 
@@ -184,7 +251,10 @@ public class GUI extends JFrame{
                                         for(String key :keySet)
                                             mRel.addElement(key);
                                         listRelations.addSelectionInterval(0, 0);//Premier item selectionne
-                                        
+                                        metriquesButton.setEnabled(true); 
+                                        csvButton.setEnabled(true);
+                                        listMetriques.setVisible(false);
+                                		definitions.setVisible(false);
                                     }catch(IOException exception) {
                                         System.out.println(exception.getMessage()); 
                                     }
@@ -223,6 +293,8 @@ public class GUI extends JFrame{
             mMeth.clear();
             mSubC.clear();
             mRel.clear();
+            mMetriques.clear();
+            definitions.setText("");
         }
 
         /**
@@ -293,12 +365,17 @@ public class GUI extends JFrame{
                             mAttr.clear();
                             mMeth.clear();
                             mSubC.clear();
+                            mMetriques.clear();
+                            definitions.setText("");
                             for(String attr: admin.getAttributesOfCurrentClass())
                                 mAttr.addElement(attr);
                             for(String mth:admin.getMethodsOfCurrentClass())
                                 mMeth.addElement(mth);
                             for(String subc : admin.getSubClasses())
                                 mSubC.addElement(subc);
+                            for(Metrique metriques: admin.getMetriquesOfCurrentClass())
+                    			mMetriques.addElement(metriques.toString());
+                            listMetriques.addSelectionInterval(0, 0);
                         }
                     });
                     
@@ -392,9 +469,31 @@ public class GUI extends JFrame{
         definitions.setWrapStyleWord(true);
         definitions.setBorder(BorderFactory.createMatteBorder(1, 1, 1, 1, Color.gray));
         definitions.setFont(definitions.getFont().deriveFont(12f));
-        
+        definitions.setVisible(false);
         JScrollPane listScrollerDefinitions = new JScrollPane(definitions);
         addTitle(listScrollerDefinitions, "Définitions");
+        
+        listMetriques.addListSelectionListener(new ListSelectionListener() {
+
+            @Override
+            public void valueChanged(ListSelectionEvent event) {
+                if (!event.getValueIsAdjusting()) {
+                    SwingUtilities.invokeLater(new Runnable() {
+                        @Override
+                        public void run() {
+                        	String metriqueSelected = listMetriques.getSelectedValue().substring(0,3);
+                        	for(Metrique m : admin.getMetriquesOfCurrentClass()){
+                        		if(m.getName().equals(metriqueSelected)){
+                        			definitions.setText(m.getDefinition());
+                        			break;
+                        		}
+                        	}
+                        }
+                    });
+                }
+            }
+        });
+                    
        // listScrollerDefinitions.setMaximumSize(new Dimension(10, 20));
         rightPanel.add(listScrollerDefinitions);
 

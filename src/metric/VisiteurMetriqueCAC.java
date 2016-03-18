@@ -33,6 +33,10 @@ public class VisiteurMetriqueCAC implements IVisiteur {
         this.associationCounter = new TreeSet<>();
     }
     
+    public Metrique getMetrique() {
+        return this.metrique;
+    }
+    
     @Override
     public void visit(Model m) {
         this.model = m;

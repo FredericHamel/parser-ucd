@@ -42,8 +42,8 @@ public class VisiteurMetriqueDIT implements IVisiteur {
     @Override
     public void visit(Classe c) {
         if(c.hasParent()) {
-            c.accept(this);
-            ++cpt;
+        	cpt++;
+            c.getParent().accept(this);
         }
     }
 

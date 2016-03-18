@@ -1,15 +1,18 @@
 package metric;
-
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
+import java.util.Locale;
 
 public class Metrique {
 	private String name;
 	private String definition;
 	private double value;
 	
-	public Metrique(String name,double value){
+	public Metrique(String name, double value){
 		this.name = name;
+		
 		for(Definition d : Definition.values()){
-			if(d.equals(this.name)) {
+			if(d.name().equals(this.name)) {
 				this.definition = d.getDefinition();
                 break;
             }
@@ -34,7 +37,8 @@ public class Metrique {
 		StringBuilder sb = new StringBuilder();
         sb.append(this.name);
         sb.append(" = ");
-        sb.append(this.value);
+		DecimalFormat numberFormat = new DecimalFormat("0.##", new DecimalFormatSymbols(Locale.US));
+        sb.append(numberFormat.format(this.value));
         sb.append("\n");
         return sb.toString();
 	}

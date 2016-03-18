@@ -8,6 +8,8 @@ import parserucd.Operation;
 import java.util.Set;
 import java.util.Iterator;
 import parserucd.IVisiteur;
+import java.util.TreeSet;
+
 
 
 public class VisiteurMetriqueANA implements IVisiteur {
@@ -17,10 +19,12 @@ public class VisiteurMetriqueANA implements IVisiteur {
     private Classe c;
     private Metrique metrique;
     private Set<Operation> operationCounter;
+    private Set<Parametre> paramCounter;
 
     public VisiteurMetriqueANA(String classname){
         this.name = classname;
-        this.metrique = null;
+        this.operationCounter = new TreeSet<>();
+        this.paramCounter = new TreeSet<>();
     }
     public Metrique getMetrique() {
         return this.metrique;
@@ -32,8 +36,9 @@ public class VisiteurMetriqueANA implements IVisiteur {
      */
     public void visit(Model m){
         this.m = m;
-        this.c = this.m.findClasse(name, false);
+        this.c = this.m.findClasse(this.name, false);
         this.c.accept(this);
+        this.metrique = new Metrique("ANA", this.operationCounter.size() == 0 ? 0 : (double)(paramCounter.size())/(double)(operationCounter.size()));
     }
 
     /**
@@ -41,16 +46,12 @@ public class VisiteurMetriqueANA implements IVisiteur {
      * @param c, une classe.
      */
     public void visit(Classe c){
-        int counterOp=0, counterParam =0;
         Iterator<Operation> oper = c.getOperationsIterator();
         while(oper.hasNext()){
-            Iterator<Parametre> p = oper.next().getParamIterator();
-            while(p.hasNext())
-                counterParam++;
-            counterOp++;
+        	Operation o = oper.next();
+        	operationCounter.add(o);
+        	o.accept(this);
         } 
-        double value = counterParam/counterOp;
-        this.metrique = new Metrique("ANA", value);
     }
 
     /**
@@ -66,7 +67,11 @@ public class VisiteurMetriqueANA implements IVisiteur {
      * @param o, l'operation. 
      */
     public void visit(Operation o){
-
+    	Iterator<Parametre> p = o.getParamIterator();
+        while(p.hasNext()){
+        	Parametre param = p.next();
+            paramCounter.add(param);
+        }
     }
 
 }

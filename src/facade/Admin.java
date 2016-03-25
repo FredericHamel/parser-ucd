@@ -123,24 +123,25 @@ public class Admin {
     public void visiteMetrique(String name){
     	this.vANA = new VisiteurMetriqueANA(name);
         this.vANA.visit(this.model);
-        this.vCAC = new VisiteurMetriqueCAC(name);
-        this.vCAC.visit(this.model);
-        this.vCLD = new VisiteurMetriqueCLD(name);
-        this.vCLD.visit(this.model);
-        this.vDIT = new VisiteurMetriqueDIT(name);
-        this.vDIT.visit(this.model);
-        this.vETC = new VisiteurMetriqueETC(name);
-        this.vETC.visit(this.model);
-        this.vITC = new VisiteurMetriqueITC(name);
-        this.vITC.visit(this.model);
+        this.vNOM = new VisiteurMetriqueNOM(name);
+        this.vNOM.visit(this.model);
         this.vNOA = new VisiteurMetriqueNOA(name);
         this.vNOA.visit(this.model);
+        this.vITC = new VisiteurMetriqueITC(name);
+        this.vITC.visit(this.model);
+        this.vETC = new VisiteurMetriqueETC(name);
+        this.vETC.visit(this.model);
+        this.vCAC = new VisiteurMetriqueCAC(name);
+        this.vCAC.visit(this.model);
+        this.vDIT = new VisiteurMetriqueDIT(name);
+        this.vDIT.visit(this.model);
+        this.vCLD = new VisiteurMetriqueCLD(name);
+        this.vCLD.visit(this.model);
         this.vNOC = new VisiteurMetriqueNOC(name);
         this.vNOC.visit(this.model);
         this.vNOD = new VisiteurMetriqueNOD(name);
         this.vNOD.visit(this.model);
-        this.vNOM = new VisiteurMetriqueNOM(name);
-        this.vNOM.visit(this.model);
+
     }
     
     /**
@@ -149,15 +150,16 @@ public class Admin {
     public ArrayList<Metrique> getMetriquesOfCurrentClass(){
     	ArrayList<Metrique> list = new ArrayList<>();
     	list.add(this.vANA.getMetrique());
-    	list.add(this.vCAC.getMetrique());
-    	list.add(this.vCLD.getMetrique());
-    	list.add(this.vDIT.getMetrique());
-    	list.add(this.vETC.getMetrique());
-    	list.add(this.vITC.getMetrique());
+    	list.add(this.vNOM.getMetrique());
     	list.add(this.vNOA.getMetrique());
+    	list.add(this.vITC.getMetrique());
+    	list.add(this.vETC.getMetrique());
+    	list.add(this.vCAC.getMetrique());
+    	list.add(this.vDIT.getMetrique());
+    	list.add(this.vCLD.getMetrique());
     	list.add(this.vNOC.getMetrique());
     	list.add(this.vNOD.getMetrique());
-    	list.add(this.vNOM.getMetrique());
+
     	return list;
     }
     

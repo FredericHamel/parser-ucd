@@ -157,7 +157,6 @@ public class GUI extends JFrame{
     		    w.append("NOC,");
     		    w.append("NOD");
     		    w.append("\n");
-
     		    /*
     		     *Boucle qui lit les valeurs
     		     *pour chaque classe.
@@ -169,7 +168,7 @@ public class GUI extends JFrame{
     		    	admin.search(classe);
     		    	m = admin.getMetriquesOfCurrentClass();
     		    	for(Metrique metrique: m){
-    		    		DecimalFormat numberFormat = new DecimalFormat("0.##", new DecimalFormatSymbols(Locale.US));
+    		    		DecimalFormat numberFormat = new DecimalFormat("#.##", new DecimalFormatSymbols(Locale.US));
     		            w.append(", "+numberFormat.format(metrique.getValue()));
     		    	}
     		    	w.append("\n");

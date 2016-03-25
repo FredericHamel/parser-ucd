@@ -2,7 +2,6 @@ package gui;
 
 import facade.Admin;
 import metric.Metrique;
-import metric.CSVFileCreator;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;

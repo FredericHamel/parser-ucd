@@ -18,21 +18,28 @@ import parserucd.IVisiteur;
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-
 public class VisiteurMetriqueCAC implements IVisiteur {
 
     private Model model;
     private Metrique metrique;
     private final String name;
-    private Set<Association> associationCounter;
-    private Set<Aggregation> aggregationCounter;
+    private final Set<Association> associationCounter;
+    private final Set<Aggregation> aggregationCounter;
 
+    /**
+     * Constructeur du calculateur de la métrique CAC.
+     * @param name 
+     */
     public VisiteurMetriqueCAC(String name) {
         this.name = name;
         this.aggregationCounter = new TreeSet<>();
         this.associationCounter = new TreeSet<>();
     }
     
+    /**
+     * La métrique calculer par ce visiteur.
+     * @return this.metrique 
+     */
     public Metrique getMetrique() {
         return this.metrique;
     }
@@ -50,6 +57,8 @@ public class VisiteurMetriqueCAC implements IVisiteur {
     public void visit(Classe c) {
         String classname = c.getName();
         Iterator<Association> itAssoc = this.model.getAssociationIterator();
+        
+        // Compte toutes les associations de la Classe c.
         while(itAssoc.hasNext()) {
             Association assoc = itAssoc.next();
             if(classname.equals(assoc.getLeft().getClasse().getName()) 
@@ -57,10 +66,15 @@ public class VisiteurMetriqueCAC implements IVisiteur {
                 this.associationCounter.add(assoc);
             }
         }
+        
+        // Visite le parent.
         if(c.hasParent())
             c.getParent().accept(this);
         
         Iterator<Aggregation> itAggreg = this.model.getAggregationIterator();
+        
+        // Compte toutes les aggrégations de la classe courante.
+        //  en ignorant les duplication.
         while(itAggreg.hasNext()) {
             Aggregation aggreg = itAggreg.next();
             if(aggreg.getContainer().getClasse().getName().equals(classname))
@@ -81,12 +95,12 @@ public class VisiteurMetriqueCAC implements IVisiteur {
 
     @Override
     public void visit(Attribut a) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        throw new UnsupportedOperationException("Not supported.");
     }
 
     @Override
     public void visit(Operation o) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        throw new UnsupportedOperationException("Not supported.");
     }
     
     

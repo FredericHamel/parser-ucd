@@ -11,23 +11,24 @@ import parserucd.Model;
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-
-/**
- *
- * @author frederic
- */
 public class VisiteurMetriqueDIT implements IVisiteur {
-
-    
     private final String name;
     private int cpt;
     private Metrique metrique;
     
+    /**
+     * Construteur du Visiteur pour DIT.
+     * @param name 
+     */
     public VisiteurMetriqueDIT(String name) {
         this.name = name;
         this.cpt = 0;
     }
     
+    /**
+     * Retourne le résultat du calcul de la métrique.
+     * @return 
+     */
     public Metrique getMetrique() {
         return this.metrique;
     }
@@ -36,11 +37,14 @@ public class VisiteurMetriqueDIT implements IVisiteur {
     public void visit(Model m) {
         Classe c = m.findClasse(name, false);
         c.accept(this);
+        
+        // Génère la métrique calculé.
         this.metrique = new Metrique("DIT", cpt);
     }
 
     @Override
     public void visit(Classe c) {
+        // Incrément le compteur s'il y a un parent. 
         if(c.hasParent()) {
         	cpt++;
             c.getParent().accept(this);
@@ -49,12 +53,12 @@ public class VisiteurMetriqueDIT implements IVisiteur {
 
     @Override
     public void visit(Attribut a) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
     public void visit(Operation o) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        throw new UnsupportedOperationException("Not supported yet.");
     }
     
 }

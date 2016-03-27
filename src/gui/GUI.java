@@ -99,8 +99,10 @@ public class GUI extends JFrame{
         chargerButton = new JButton("Charger fichier");		
         fieldFile = new JTextField(20);
         fieldFile.setEditable(false);
+        //Ajout du bouton des metriques
         metriquesButton = new JButton("Charger métriques");
-        metriquesButton.setEnabled(false); 
+        metriquesButton.setEnabled(false);
+        //Ajout du bouton de creation de fichier
         csvButton = new JButton("Créer .csv");
         csvButton.setEnabled(false); 
         
@@ -167,7 +169,8 @@ public class GUI extends JFrame{
     		    	admin.search(classe);
     		    	m = admin.getMetriquesOfCurrentClass();
     		    	for(Metrique metrique: m){
-    		    		DecimalFormat numberFormat = new DecimalFormat("#.##", new DecimalFormatSymbols(Locale.US));
+    		    		//Specifier un affichage special: point de separation et si pas de decimales alors pas d'affichage
+    		    		DecimalFormat numberFormat = new DecimalFormat("0.##", new DecimalFormatSymbols(Locale.US));
     		            w.append(", "+numberFormat.format(metrique.getValue()));
     		    	}
     		    	w.append("\n");
@@ -182,6 +185,11 @@ public class GUI extends JFrame{
     	}
     }
     
+    /**
+     * Cette classe implémente ActionListener et permet de rendre visible 
+     * les metriques et definitions lorsque l'usager clique sur le
+     * bouton des metriques.
+     */
     private class AddMetriquesListener implements ActionListener{
     	
     	@Override
@@ -249,10 +257,10 @@ public class GUI extends JFrame{
                                         for(String key :keySet)
                                             mRel.addElement(key);
                                         listRelations.addSelectionInterval(0, 0);//Premier item selectionne
-                                        metriquesButton.setEnabled(true); 
-                                        csvButton.setEnabled(true);
-                                        listMetriques.setVisible(false);
-                                		definitions.setVisible(false);
+                                        metriquesButton.setEnabled(true); //Rendre le bouton des metriques non cliquable
+                                        csvButton.setEnabled(true);//Rendre le bouton de creation de fichier .csv non cliquable
+                                        listMetriques.setVisible(false);//Rendre la liste des metriques non visible
+                                		definitions.setVisible(false);//Rendre la liste des définitions non visible
                                     }catch(IOException exception) {
                                         System.out.println(exception.getMessage()); 
                                     }
@@ -444,11 +452,15 @@ public class GUI extends JFrame{
     }
 
     
+    /**
+     * Creation du panneau de droite contenant la liste des metriques
+     * et la liste des definitions.
+     */
     public void createRightPanel(){
     	rightPanel = new JPanel();
     	rightPanel.setLayout(new SpringLayout());
-    	//rightPanel.setMinimumSize(new Dimension(40, 80));
     	
+    	//Liste des metriques
     	mMetriques = new DefaultListModel<>();
     	listMetriques = new JList<>(mMetriques);
     	listMetriques.setBorder(BorderFactory.createMatteBorder(1, 1, 1, 1, Color.gray));
@@ -457,11 +469,12 @@ public class GUI extends JFrame{
     	listMetriques.setLayoutOrientation(JList.VERTICAL);
     	listMetriques.setVisibleRowCount(-1);
     	
+    	//JScrollePanel pour la liste des metriques
     	JScrollPane listScroller = new JScrollPane(listMetriques);
         addTitle(listScroller, "Métriques");
-        //listScroller.setMinimumSize(new Dimension(40, 60));
         rightPanel.add(listScroller);
         
+        //Liste des definitions
         definitions = new JTextArea(1, 5);
         definitions.setLineWrap(true);
         definitions.setWrapStyleWord(true);
@@ -472,7 +485,10 @@ public class GUI extends JFrame{
         addTitle(listScrollerDefinitions, "Définitions");
         
         listMetriques.addListSelectionListener(new ListSelectionListener() {
-
+        	
+        	/**
+        	 * Fonction qui va chercher les metriques à afficher et les definitions
+        	 */
             @Override
             public void valueChanged(ListSelectionEvent event) {
                 if (!event.getValueIsAdjusting()) {
@@ -492,7 +508,6 @@ public class GUI extends JFrame{
             }
         });
                     
-       // listScrollerDefinitions.setMaximumSize(new Dimension(10, 20));
         rightPanel.add(listScrollerDefinitions);
 
         SpringUtilities.makeCompactGrid(rightPanel, 2, 1, 6, 6, 6, 6);
